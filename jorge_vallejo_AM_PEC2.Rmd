@@ -79,7 +79,7 @@ library(knitr)
 # library(MVN)
 ```
 
-# Ejercicio 1. En el trabajo de Hunt et al.[1] se estudió la capacidad reproductiva de cinco especies de aves marinas en dos colonias en el sureste del mar de Bering. Además, el apéndice de este estudio resume las colonias y los tamaños de las poblaciones de otros trabajos. El archivo seabirds.csv recoge los datos (número de pájaros) de 23 especies en 9 colonias en el área del norte polar y subpolar. El principal interés de este ejercicio es representar las colonias de diversas formas y estudiar posibles conglomerados.
+# Ejercicio 1. En el trabajo de Hunt et al.[@hunt1986reproductive] se estudió la capacidad reproductiva de cinco especies de aves marinas en dos colonias en el sureste del mar de Bering. Además, el apéndice de este estudio resume las colonias y los tamaños de las poblaciones de otros trabajos. El archivo seabirds.csv recoge los datos (número de pájaros) de 23 especies en 9 colonias en el área del norte polar y subpolar. El principal interés de este ejercicio es representar las colonias de diversas formas y estudiar posibles conglomerados.
 
 
 
