@@ -23,7 +23,7 @@ knit: (function(inputFile, encoding) {
 # And:
 # https://stackoverflow.com/a/46007686/10647267
 
-# bibliography: references.bib
+bibliography: references.bib
 ---
   
 ```{r setup, include=FALSE}
@@ -72,6 +72,7 @@ file.remove(
 ```{r libraries, include=FALSE}
 # Load packages
 library(knitr)
+library(bookdown)
 # library(factoextra)
 # library(gridExtra)
 # library(corrplot)
@@ -79,7 +80,50 @@ library(knitr)
 # library(MVN)
 ```
 
-# Ejercicio 1. En el trabajo de Hunt et al.[@hunt1986reproductive] se estudió la capacidad reproductiva de cinco especies de aves marinas en dos colonias en el sureste del mar de Bering. Además, el apéndice de este estudio resume las colonias y los tamaños de las poblaciones de otros trabajos. El archivo seabirds.csv recoge los datos (número de pájaros) de 23 especies en 9 colonias en el área del norte polar y subpolar. El principal interés de este ejercicio es representar las colonias de diversas formas y estudiar posibles conglomerados.
+# Ejercicio 1. Los pájaros de Hunt (_et al_.)
+
+**En el trabajo de Hunt et al.[-@hunt1986reproductive] se estudió la capacidad reproductiva de cinco especies de aves marinas en dos colonias en el sureste del mar de Bering. Además, el apéndice de este estudio resume las colonias y los tamaños de las poblaciones de otros trabajos. El archivo `seabirds.csv` recoge los datos (número de pájaros) de 23 especies en 9 colonias en el área del norte polar y subpolar. **
+
+**El principal interés de este ejercicio es representar las colonias de diversas formas y estudiar posibles conglomerados.**
+
+En primer lugar, como preparación al ejercicio cargaremos los datos a memoria y examinaremos las características y estructura de los mismos.
+
+```{r load seabirds data}
+seabirds <- read.csv("./data/seabirds.csv",
+                     stringsAsFactors = FALSE)
+
+kable(
+  head(seabirds),
+  caption = "Ejemplo de las primeras seis observaciones en la base de datos `seabirds.csv`."
+)
+```
+
+Si examinamos la estructura de la base de datos:
+```{r}
+str(seabirds)
+```
+
+La base de datos consta de 23 observaciones (files) y 10 variables (columnas). De las diez variables, una corresponde a la especie observada (codificada como cadena de caracteres) y las otras nueve son situaciones geográficas en las que se han obsevado colonias de dichas especies. Los valores que adoptan estas nueve variables son la cantidad de individuos de cada especie, y están codificadas como variables numéricas[^1]:
+
+[^1]: Alternativamente, podríamos reordenar la base de datos para tener sólo tres variables; especie, lugar geográfico y número de individuos. Sin embargo, para los análisis que realizaremos más adelante resulta más cómodo considerar cada lugar geogŕafico como una variable diferente.
+
+Specie: Nombre común de una especie de ave marina.
+CH: Número de individuos en la población de Cape Hay.
+PLI: Número de individuos en la población de Prince Leopold Island.
+CI: Individuos en Caburg Island.
+NS: Individuos en North Shields.
+CL: Individuos en Cape Lisburne.
+CT: Individuos en Cape Thompson.
+SI: Individuos en Skomer Island.
+SPI: Individuos en St. Paul Island.
+SGI: Individuos en George Island.
+
+Finalmente, una forma rápida de buscar valores anómalos y valores ausentes es mediante el resumen numérico:
+```{r}
+summary(seabirds)
+```
+
+No parece haber valores anómalos (entendidos como imposiblemente elevados, negativos, o faltantes) en ninguna de las variables. Sí que podemos ver sin embargo una característica interesante de nuestros datos; la mayoría de valores son ceros. Fijémonos que en el sumario la mayoría de variables presentan valor cero en el segundo, e incluso en el tercer quintil. Esto ya nos adelanta que, en la mayoría de los lugares observados, sólo están presentes menos de la mitad de las especies.
 
 
 
