@@ -209,10 +209,10 @@ kable(
 
 ```{r column profiles table}
 # Frecuencias relativas condicionadas por columnas
-table_Pc <- sweep(table_F, 2, t(table_M[nrow(table_M), -ncol(table_M)]), "/") 
+table_Pc <- sweep(table_F, 2, colSums(table_F), "/") 
 
 kable(
-  drop.leading.0(table_F),
+  drop.leading.0(table_Pc),
   caption = "Matriz de perfiles de columna",
   align = c(rep('c', 9)) # To center the zeroes (prettier table)
 )
@@ -221,6 +221,27 @@ kable(
 
 
 ## Ejercicio 1b. Calcular la matriz de distancias ji-cuadrado entre los perfiles de las columnas y su inercia total.
+
+
+```{r ji-sq distances matrix}
+ncols <- ncol(table_N)
+# Initialize matrix to store results
+D2_chisq <- matrix(0, ncols, ncols)
+# Calculate distances
+for (i in 1:(ncols-1)){
+  for (j in i:ncols){
+    D2_chisq[i,j] <- as.matrix((table_Pc[i, ] - table_Pc[j, ])) %*%
+       diag(1 / colSums(table_F)) %*% # Diagonal matrix from column margin
+      t(table_Pc[i, ] - table_Pc[j, ])
+  }
+}
+# Names for distance matrix
+rownames(D2_chisq) <- colnames(D2_chisq) <- rownames(table_N)
+
+# Print table
+D2_chisq
+```
+
 
 
 <!-- # Apéndice A: Código -->
