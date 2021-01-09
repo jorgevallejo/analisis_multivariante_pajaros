@@ -132,12 +132,11 @@ Anteriormente sólo hemos visto una muestra con las primeras seis filas de la ta
 ```{r tabla frecuencias}
 # Place species as row names
 table_N <- seabirds
-rownames(seabirds) <- seabirds$Specie
+rownames(table_N) <- seabirds$Specie
 table_N <- table_N[, -1]
 
 kable(
-  cbind(Specie=seabirds[, 1], table_N),
-  row.names = FALSE,
+  table_N,
   caption = "Tabla de frecuencias de cada especie de ave marina en cada una de las localizaciones."
 )
 ```
@@ -168,9 +167,9 @@ drop.leading.0 <- function(dataf) {
   tableF2
 }
 
+# Print relative freq table
 kable(
   drop.leading.0(table_F),
-  row.names = TRUE,
   caption = "Tabla de frecuencias relativas de cada especie en cada localización, redondeadas al quinto decimal.",
   align = c(rep('c', 9)) # To center the zeroes (prettier table)
 )
@@ -188,7 +187,6 @@ table_M <- rbind(table_M, # Add columns margin
 # Print table
 kable(
   drop.leading.0(table_M),
-  row.names = TRUE,
   caption = "Tabla de frecuencias relativas más las frecuencias marginales para filas y columnas.",
   align = c(rep('c', 9)) # To center the zeroes (prettier table)
 )
@@ -196,14 +194,13 @@ kable(
 
 
 ### Matriz de perfiles
-```{r}
+```{r profiles table}
 # Frecuencias relativas condicionadas por filas
 table_P <- sweep(table_F, 1, table_M$Suma, "/") 
 
 kable(
   drop.leading.0(table_P),
   caption = "Matriz de perfiles",
-  row.names = TRUE,
   align = c(rep('c', 9)) # To center the zeroes (prettier table)
 )
 ```
