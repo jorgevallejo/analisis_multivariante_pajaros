@@ -228,18 +228,22 @@ ncols <- ncol(table_N)
 # Initialize matrix to store results
 D2_chisq <- matrix(0, ncols, ncols)
 # Calculate distances
-for (i in 1:(ncols-1)){
-  for (j in i:ncols){
-    D2_chisq[i,j] <- as.matrix((table_Pc[i, ] - table_Pc[j, ])) %*%
-       diag(1 / colSums(table_F)) %*% # Diagonal matrix from column margin
-      t(table_Pc[i, ] - table_Pc[j, ])
+for (i in 1:(ncols)){
+  for (j in 1:ncols){
+    D2_chisq[i,j] <- t(table_Pc[,i ] - table_Pc[,j ]) %*%
+       diag(1 / rowSums(table_F)) %*% # Diagonal matrix from file margin
+      (table_Pc[, i] - table_Pc[, j])
   }
 }
 # Names for distance matrix
-rownames(D2_chisq) <- colnames(D2_chisq) <- rownames(table_N)
+rownames(D2_chisq) <- colnames(D2_chisq) <- colnames(table_N)
 
 # Print table
-D2_chisq
+kable(
+D2_chisq,
+digits = 5,
+caption = "Matriz de distancias ji-cuadrado entre columnas",
+  align = c(rep('c', 9)))
 ```
 
 
