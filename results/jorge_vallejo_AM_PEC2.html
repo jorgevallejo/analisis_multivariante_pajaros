@@ -199,10 +199,10 @@ summary {
 <li><a href="#ejercicio-1.-los-pájaros-de-hunt-et-al.">Ejercicio 1. Los pájaros de Hunt (<em>et al</em>.)</a><ul>
 <li><a href="#ejercicio-1a.-calcular-las-frecuencias-relativas-las-frecuencias-relativas-marginales-y-la-matriz-de-perfiles.-el-resultado-debería-ser-la-tabla-12.6-del-libro-de-krebs-krebs2014-y-que-reproducimos-al-final-de-este-documento.">Ejercicio 1a. Calcular las frecuencias relativas, las frecuencias relativas marginales y la matriz de perfiles. El resultado debería ser la tabla 12.6 del libro de Krebs<span class="citation">(2014)</span> y que reproducimos al final de este documento.</a><ul>
 <li><a href="#tabla-de-frecuencias-relativas">Tabla de frecuencias relativas</a></li>
+<li><a href="#tabla-con-frecuencias-marginales">Tabla con frecuencias marginales</a></li>
+<li><a href="#matrices-de-perfiles">Matrices de perfiles</a></li>
 </ul></li>
-<li><a href="#tabla-con-frecuencias-marginales">Tabla con frecuencias marginales</a><ul>
-<li><a href="#matriz-de-perfiles">Matriz de perfiles</a></li>
-</ul></li>
+<li><a href="#ejercicio-1b.-calcular-la-matriz-de-distancias-ji-cuadrado-entre-los-perfiles-de-las-columnas-y-su-inercia-total.">Ejercicio 1b. Calcular la matriz de distancias ji-cuadrado entre los perfiles de las columnas y su inercia total.</a></li>
 </ul></li>
 <li><a href="#referencias">Referencias</a></li>
 </ul>
@@ -984,9 +984,8 @@ kable(
 </tbody>
 </table>
 </div>
-</div>
-<div id="tabla-con-frecuencias-marginales" class="section level2">
-<h2>Tabla con frecuencias marginales</h2>
+<div id="tabla-con-frecuencias-marginales" class="section level3">
+<h3>Tabla con frecuencias marginales</h3>
 <pre class="r"><code># Design table
 table_M &lt;- table_F
 table_M$Suma &lt;- apply(table_M, 1, sum) # Add row margin
@@ -1331,18 +1330,19 @@ kable(
 </tr>
 </tbody>
 </table>
-<div id="matriz-de-perfiles" class="section level3">
-<h3>Matriz de perfiles</h3>
+</div>
+<div id="matrices-de-perfiles" class="section level3">
+<h3>Matrices de perfiles</h3>
 <pre class="r"><code># Frecuencias relativas condicionadas por filas
 table_P &lt;- sweep(table_F, 1, table_M$Suma, &quot;/&quot;) 
 
 kable(
   drop.leading.0(table_P),
-  caption = &quot;Matriz de perfiles&quot;,
+  caption = &quot;Matriz de perfiles de fila&quot;,
   align = c(rep('c', 9)) # To center the zeroes (prettier table)
 )</code></pre>
 <table>
-<caption>Matriz de perfiles</caption>
+<caption>Matriz de perfiles de fila</caption>
 <thead>
 <tr class="header">
 <th></th>
@@ -1636,6 +1636,313 @@ kable(
 </tr>
 </tbody>
 </table>
+<pre class="r"><code># Frecuencias relativas condicionadas por columnas
+table_Pc &lt;- sweep(table_F, 2, t(table_M[nrow(table_M), -ncol(table_M)]), &quot;/&quot;) 
+
+kable(
+  drop.leading.0(table_F),
+  caption = &quot;Matriz de perfiles de columna&quot;,
+  align = c(rep('c', 9)) # To center the zeroes (prettier table)
+)</code></pre>
+<table>
+<caption>Matriz de perfiles de columna</caption>
+<thead>
+<tr class="header">
+<th></th>
+<th align="center">CH</th>
+<th align="center">PLI</th>
+<th align="center">CI</th>
+<th align="center">NS</th>
+<th align="center">CL</th>
+<th align="center">CT</th>
+<th align="center">SI</th>
+<th align="center">SPI</th>
+<th align="center">SGI</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Northern.fulmar</td>
+<td align="center">0</td>
+<td align="center">.026018</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">.000047</td>
+<td align="center">.000147</td>
+<td align="center">.014688</td>
+</tr>
+<tr class="even">
+<td>Glaucous-winged.gull</td>
+<td align="center">.000031</td>
+<td align="center">.000084</td>
+<td align="center">.000031</td>
+<td align="center">.000057</td>
+<td align="center">.000010</td>
+<td align="center">.000063</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+</tr>
+<tr class="odd">
+<td>Black-legged.kittiwake</td>
+<td align="center">.008393</td>
+<td align="center">.012170</td>
+<td align="center">.012589</td>
+<td align="center">.001584</td>
+<td align="center">.005246</td>
+<td align="center">.005560</td>
+<td align="center">.001049</td>
+<td align="center">.006505</td>
+<td align="center">.015107</td>
+</tr>
+<tr class="even">
+<td>Red-legged.kittiwake</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">.000462</td>
+<td align="center">.046161</td>
+</tr>
+<tr class="odd">
+<td>Thick-billed.murre</td>
+<td align="center">.058751</td>
+<td align="center">.036090</td>
+<td align="center">.067144</td>
+<td align="center">.000084</td>
+<td align="center">.006295</td>
+<td align="center">.049010</td>
+<td align="center">0</td>
+<td align="center">.023081</td>
+<td align="center">.314737</td>
+</tr>
+<tr class="even">
+<td>Common.murre</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">.008771</td>
+<td align="center">.014688</td>
+<td align="center">.032674</td>
+<td align="center">.001116</td>
+<td align="center">.008183</td>
+<td align="center">.039867</td>
+</tr>
+<tr class="odd">
+<td>Black.guillemot</td>
+<td align="center">.000042</td>
+<td align="center">.001679</td>
+<td align="center">.000042</td>
+<td align="center">0</td>
+<td align="center">.000036</td>
+<td align="center">.000001</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+</tr>
+<tr class="even">
+<td>Pigeon.guillemot</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">.000003</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+</tr>
+<tr class="odd">
+<td>Horned.puffin</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">.000669</td>
+<td align="center">.000304</td>
+<td align="center">.000313</td>
+<td align="center">0</td>
+<td align="center">.000923</td>
+<td align="center">.005875</td>
+</tr>
+<tr class="even">
+<td>Tufted.puffin</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">.000009</td>
+<td align="center">.000004</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">.000210</td>
+<td align="center">.001259</td>
+</tr>
+<tr class="odd">
+<td>Atlantic.puffin</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">.003357</td>
+<td align="center">0</td>
+<td align="center">0</td>
+</tr>
+<tr class="even">
+<td>Pelagic.cormorant</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">.000109</td>
+<td align="center">.000016</td>
+<td align="center">.000010</td>
+<td align="center">.000006</td>
+<td align="center">0</td>
+<td align="center">0</td>
+</tr>
+<tr class="odd">
+<td>Red-faced.cormorant</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">.000525</td>
+<td align="center">.001049</td>
+</tr>
+<tr class="even">
+<td>Shag</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">.000006</td>
+<td align="center">0</td>
+<td align="center">0</td>
+</tr>
+<tr class="odd">
+<td>Parakeet.auklet</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">.000014</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">.007134</td>
+<td align="center">.031474</td>
+</tr>
+<tr class="even">
+<td>Crested.auklet</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">.001259</td>
+<td align="center">.005875</td>
+</tr>
+<tr class="odd">
+<td>Least.auklet</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">.004826</td>
+<td align="center">.052456</td>
+</tr>
+<tr class="even">
+<td>Razorbill</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">.000901</td>
+<td align="center">0</td>
+<td align="center">0</td>
+</tr>
+<tr class="odd">
+<td>Manx.shearwater</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">.054554</td>
+<td align="center">0</td>
+<td align="center">0</td>
+</tr>
+<tr class="even">
+<td>Storm.petrel</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">.002711</td>
+<td align="center">0</td>
+<td align="center">0</td>
+</tr>
+<tr class="odd">
+<td>Herring.gull</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">.001595</td>
+<td align="center">0</td>
+<td align="center">0</td>
+</tr>
+<tr class="even">
+<td>Great.black-backed.gull</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">.000066</td>
+<td align="center">0</td>
+<td align="center">0</td>
+</tr>
+<tr class="odd">
+<td>Lesser.black.backed.gull</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">.004196</td>
+<td align="center">0</td>
+<td align="center">0</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="ejercicio-1b.-calcular-la-matriz-de-distancias-ji-cuadrado-entre-los-perfiles-de-las-columnas-y-su-inercia-total." class="section level2">
+<h2>Ejercicio 1b. Calcular la matriz de distancias ji-cuadrado entre los perfiles de las columnas y su inercia total.</h2>
 <!-- # Apéndice A: Código -->
 <!-- El documento original en formato .Rmd, que incluye el código completo en lenguaje R usado para generar este informe, se puede consultar y descargar en el siguiente repositorio de Github: -->
 <!-- [jorgevallejo/RNAseq_analysis_PEC2](https://github.com/jorgevallejo/RNAseq_analysis_PEC2) -->
@@ -1643,7 +1950,6 @@ kable(
 <!-- ```{r session_info, include=TRUE, echo=TRUE, results='markup'} -->
 <!-- sessionInfo() # For better reproducibility -->
 <!-- ``` -->
-</div>
 </div>
 </div>
 <div id="referencias" class="section level1 unnumbered">

@@ -176,7 +176,7 @@ kable(
 ```
 
 
-## Tabla con frecuencias marginales
+### Tabla con frecuencias marginales
 ```{r table frecuencias marginales}
 # Design table
 table_M <- table_F
@@ -193,18 +193,34 @@ kable(
 ```
 
 
-### Matriz de perfiles
-```{r profiles table}
+### Matrices de perfiles
+```{r file profiles table}
 # Frecuencias relativas condicionadas por filas
 table_P <- sweep(table_F, 1, table_M$Suma, "/") 
 
 kable(
   drop.leading.0(table_P),
-  caption = "Matriz de perfiles",
+  caption = "Matriz de perfiles de fila",
   align = c(rep('c', 9)) # To center the zeroes (prettier table)
 )
 ```
 
+
+
+```{r column profiles table}
+# Frecuencias relativas condicionadas por columnas
+table_Pc <- sweep(table_F, 2, t(table_M[nrow(table_M), -ncol(table_M)]), "/") 
+
+kable(
+  drop.leading.0(table_F),
+  caption = "Matriz de perfiles de columna",
+  align = c(rep('c', 9)) # To center the zeroes (prettier table)
+)
+```
+
+
+
+## Ejercicio 1b. Calcular la matriz de distancias ji-cuadrado entre los perfiles de las columnas y su inercia total.
 
 
 <!-- # Apéndice A: Código -->
