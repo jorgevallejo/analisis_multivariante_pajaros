@@ -126,6 +126,89 @@ summary(seabirds)
 No parece haber valores anómalos (entendidos como imposiblemente elevados, negativos, o faltantes) en ninguna de las variables. Sí que podemos ver sin embargo una característica interesante de nuestros datos; la mayoría de valores son ceros. Fijémonos que en el sumario la mayoría de variables presentan valor cero en el segundo, e incluso en el tercer quintil. Esto ya nos adelanta que, en la mayoría de los lugares observados, sólo están presentes menos de la mitad de las especies.
 
 
+## Ejercicio 1a. Calcular las frecuencias relativas, las frecuencias relativas marginales y la matriz de perfiles. El resultado debería ser la tabla 12.6 del libro de Krebs[-@krebs2014] y que reproducimos al final de este documento.
+
+Anteriormente sólo hemos visto una muestra con las primeras seis filas de la tabla. Aprovecharemos este ejercicio para ver la tabla en su totalidad:
+```{r tabla frecuencias}
+# Place species as row names
+table_N <- seabirds
+rownames(seabirds) <- seabirds$Specie
+table_N <- table_N[, -1]
+
+kable(
+  cbind(Specie=seabirds[, 1], table_N),
+  row.names = FALSE,
+  caption = "Tabla de frecuencias de cada especie de ave marina en cada una de las localizaciones."
+)
+```
+
+
+### Tabla de frecuencias relativas
+```{r tabla frecuencias relativas}
+# Create table of relative frecuencies
+n <- sum(table_N) # total observed birds
+table_F <- table_N/n # relative frequencies
+
+##
+# For printing relative f. data without leading zeros
+# there is a solution here:
+# https://stackoverflow.com/questions/53740145/remove-leading-zeros-in-numbers-within-a-data-frame
+# Apply it if there is enough time
+# (you will have first to prettyformat the numbers)
+##
+
+# Function for dropping leading zeros befor decimal point
+# Returns a data.frame of character values
+drop.leading.0 <- function(dataf) {
+  prettified_t <- format(round(dataf, digits = 6), # round to this decimal
+                         zero.print = "0") # What to print when the result is zero
+  tableF2 <- data.frame(lapply(prettified_t,
+                         function(x) gsub("^0\\.", "\\.", gsub("^-0\\.", "-\\.", as.character(x)))),
+                  stringsAsFactors = FALSE, row.names = row.names(prettified_t))
+  tableF2
+}
+
+kable(
+  drop.leading.0(table_F),
+  row.names = TRUE,
+  caption = "Tabla de frecuencias relativas de cada especie en cada localización, redondeadas al quinto decimal.",
+  align = c(rep('c', 9)) # To center the zeroes (prettier table)
+)
+```
+
+
+## Tabla con frecuencias marginales
+```{r table frecuencias marginales}
+# Design table
+table_M <- table_F
+table_M$Suma <- apply(table_M, 1, sum) # Add row margin
+table_M <- rbind(table_M, # Add columns margin
+                      Suma = apply(table_M, 2, sum))
+
+# Print table
+kable(
+  drop.leading.0(table_M),
+  row.names = TRUE,
+  caption = "Tabla de frecuencias relativas más las frecuencias marginales para filas y columnas.",
+  align = c(rep('c', 9)) # To center the zeroes (prettier table)
+)
+```
+
+
+### Matriz de perfiles
+```{r}
+# Frecuencias relativas condicionadas por filas
+table_P <- sweep(table_F, 1, table_M$Suma, "/") 
+
+kable(
+  drop.leading.0(table_P),
+  caption = "Matriz de perfiles",
+  row.names = TRUE,
+  align = c(rep('c', 9)) # To center the zeroes (prettier table)
+)
+```
+
+
 
 <!-- # Apéndice A: Código -->
 

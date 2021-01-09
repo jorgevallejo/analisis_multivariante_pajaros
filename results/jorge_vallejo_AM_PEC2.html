@@ -190,13 +190,20 @@ summary {
 <h1 class="title toc-ignore">Los pájaros de Hunt <em>(et al.)</em></h1>
 <h3 class="subtitle">Análisis Multivariante - PEC 2</h3>
 <h4 class="author">Jorge Vallejo Ortega</h4>
-<h4 class="date">8 de January, 2021</h4>
+<h4 class="date">9 de January, 2021</h4>
 
 </div>
 
 <div id="TOC">
 <ul>
-<li><a href="#ejercicio-1.-los-pájaros-de-hunt-et-al.">Ejercicio 1. Los pájaros de Hunt (<em>et al</em>.)</a></li>
+<li><a href="#ejercicio-1.-los-pájaros-de-hunt-et-al.">Ejercicio 1. Los pájaros de Hunt (<em>et al</em>.)</a><ul>
+<li><a href="#ejercicio-1a.-calcular-las-frecuencias-relativas-las-frecuencias-relativas-marginales-y-la-matriz-de-perfiles.-el-resultado-debería-ser-la-tabla-12.6-del-libro-de-krebs-krebs2014-y-que-reproducimos-al-final-de-este-documento.">Ejercicio 1a. Calcular las frecuencias relativas, las frecuencias relativas marginales y la matriz de perfiles. El resultado debería ser la tabla 12.6 del libro de Krebs<span class="citation">(2014)</span> y que reproducimos al final de este documento.</a><ul>
+<li><a href="#tabla-de-frecuencias-relativas">Tabla de frecuencias relativas</a></li>
+</ul></li>
+<li><a href="#tabla-con-frecuencias-marginales">Tabla con frecuencias marginales</a><ul>
+<li><a href="#matriz-de-perfiles">Matriz de perfiles</a></li>
+</ul></li>
+</ul></li>
 <li><a href="#referencias">Referencias</a></li>
 </ul>
 </div>
@@ -319,6 +326,1319 @@ kable(
 ##  $ SGI   : int  70000 0 72000 220000 1500000 190000 0 0 28000 6000 ...</code></pre>
 <p>La base de datos consta de 23 observaciones (files) y 10 variables (columnas). De las diez variables, una corresponde a la especie observada (codificada como cadena de caracteres) y las otras nueve son situaciones geográficas en las que se han obsevado colonias de dichas especies. Los valores que adoptan estas nueve variables son la cantidad de individuos de cada especie, y están codificadas como variables numéricas<a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a>:</p>
 <p>Specie: Nombre común de una especie de ave marina. CH: Número de individuos en la población de Cape Hay. PLI: Número de individuos en la población de Prince Leopold Island. CI: Individuos en Caburg Island. NS: Individuos en North Shields. CL: Individuos en Cape Lisburne. CT: Individuos en Cape Thompson. SI: Individuos en Skomer Island. SPI: Individuos en St. Paul Island. SGI: Individuos en George Island.</p>
+<p>Finalmente, una forma rápida de buscar valores anómalos y valores ausentes es mediante el resumen numérico:</p>
+<pre class="r"><code>summary(seabirds)</code></pre>
+<pre><code>##     Specie                CH              PLI               CI        
+##  Length:23          Min.   :     0   Min.   :     0   Min.   :     0  
+##  Class :character   1st Qu.:     0   1st Qu.:     0   1st Qu.:     0  
+##  Mode  :character   Median :     0   Median :     0   Median :     0  
+##                     Mean   : 13928   Mean   : 15757   Mean   : 16537  
+##                     3rd Qu.:     0   3rd Qu.:     0   3rd Qu.:     0  
+##                     Max.   :280000   Max.   :172000   Max.   :320000  
+##        NS                CL              CT               SI        
+##  Min.   :    0.0   Min.   :    0   Min.   :     0   Min.   :     0  
+##  1st Qu.:    0.0   1st Qu.:    0   1st Qu.:     0   1st Qu.:     0  
+##  Median :    0.0   Median :    0   Median :     0   Median :    28  
+##  Mean   : 2340.6   Mean   : 5512   Mean   : 18159   Mean   : 14423  
+##  3rd Qu.:  169.5   3rd Qu.:   64   3rd Qu.:    30   3rd Qu.:  5160  
+##  Max.   :41800.0   Max.   :70000   Max.   :233578   Max.   :260000  
+##       SPI              SGI         
+##  Min.   :     0   Min.   :      0  
+##  1st Qu.:     0   1st Qu.:      0  
+##  Median :     0   Median :      0  
+##  Mean   : 11035   Mean   : 109522  
+##  3rd Qu.:  5200   3rd Qu.:  71000  
+##  Max.   :110000   Max.   :1500000</code></pre>
+<p>No parece haber valores anómalos (entendidos como imposiblemente elevados, negativos, o faltantes) en ninguna de las variables. Sí que podemos ver sin embargo una característica interesante de nuestros datos; la mayoría de valores son ceros. Fijémonos que en el sumario la mayoría de variables presentan valor cero en el segundo, e incluso en el tercer quintil. Esto ya nos adelanta que, en la mayoría de los lugares observados, sólo están presentes menos de la mitad de las especies.</p>
+<div id="ejercicio-1a.-calcular-las-frecuencias-relativas-las-frecuencias-relativas-marginales-y-la-matriz-de-perfiles.-el-resultado-debería-ser-la-tabla-12.6-del-libro-de-krebs-krebs2014-y-que-reproducimos-al-final-de-este-documento." class="section level2">
+<h2>Ejercicio 1a. Calcular las frecuencias relativas, las frecuencias relativas marginales y la matriz de perfiles. El resultado debería ser la tabla 12.6 del libro de Krebs<span class="citation">(2014)</span> y que reproducimos al final de este documento.</h2>
+<p>Anteriormente sólo hemos visto una muestra con las primeras seis filas de la tabla. Aprovecharemos este ejercicio para ver la tabla en su totalidad:</p>
+<pre class="r"><code># Place species as row names
+table_N &lt;- seabirds
+rownames(seabirds) &lt;- seabirds$Specie
+table_N &lt;- table_N[, -1]
+
+kable(
+  cbind(Species=seabirds[, 1], table_N),
+  row.names = FALSE,
+  caption = &quot;Tabla de frecuencias de cada especie de ave marina en cada una de las localizaciones.&quot;
+)</code></pre>
+<table>
+<caption>Tabla de frecuencias de cada especie de ave marina en cada una de las localizaciones.</caption>
+<thead>
+<tr class="header">
+<th align="left">Species</th>
+<th align="right">CH</th>
+<th align="right">PLI</th>
+<th align="right">CI</th>
+<th align="right">NS</th>
+<th align="right">CL</th>
+<th align="right">CT</th>
+<th align="right">SI</th>
+<th align="right">SPI</th>
+<th align="right">SGI</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Northern.fulmar</td>
+<td align="right">0</td>
+<td align="right">124000</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">224</td>
+<td align="right">700</td>
+<td align="right">70000</td>
+</tr>
+<tr class="even">
+<td align="left">Glaucous-winged.gull</td>
+<td align="right">150</td>
+<td align="right">400</td>
+<td align="right">150</td>
+<td align="right">274</td>
+<td align="right">50</td>
+<td align="right">300</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">Black-legged.kittiwake</td>
+<td align="right">40000</td>
+<td align="right">58000</td>
+<td align="right">60000</td>
+<td align="right">7550</td>
+<td align="right">25000</td>
+<td align="right">26500</td>
+<td align="right">5000</td>
+<td align="right">31000</td>
+<td align="right">72000</td>
+</tr>
+<tr class="even">
+<td align="left">Red-legged.kittiwake</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">2200</td>
+<td align="right">220000</td>
+</tr>
+<tr class="odd">
+<td align="left">Thick-billed.murre</td>
+<td align="right">280000</td>
+<td align="right">172000</td>
+<td align="right">320000</td>
+<td align="right">400</td>
+<td align="right">30000</td>
+<td align="right">233578</td>
+<td align="right">0</td>
+<td align="right">110000</td>
+<td align="right">1500000</td>
+</tr>
+<tr class="even">
+<td align="left">Common.murre</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">41800</td>
+<td align="right">70000</td>
+<td align="right">155719</td>
+<td align="right">5320</td>
+<td align="right">39000</td>
+<td align="right">190000</td>
+</tr>
+<tr class="odd">
+<td align="left">Black.guillemot</td>
+<td align="right">200</td>
+<td align="right">8000</td>
+<td align="right">200</td>
+<td align="right">0</td>
+<td align="right">170</td>
+<td align="right">4</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">Pigeon.guillemot</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">14</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">Horned.puffin</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">3186</td>
+<td align="right">1450</td>
+<td align="right">1494</td>
+<td align="right">0</td>
+<td align="right">4400</td>
+<td align="right">28000</td>
+</tr>
+<tr class="even">
+<td align="left">Tufted.puffin</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">41</td>
+<td align="right">20</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1000</td>
+<td align="right">6000</td>
+</tr>
+<tr class="odd">
+<td align="left">Atlantic.puffin</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">16000</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">Pelagic.cormorant</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">518</td>
+<td align="right">78</td>
+<td align="right">46</td>
+<td align="right">28</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">Red-faced.cormorant</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">2500</td>
+<td align="right">5000</td>
+</tr>
+<tr class="even">
+<td align="left">Shag</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">30</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">Parakeet.auklet</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">65</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">34000</td>
+<td align="right">150000</td>
+</tr>
+<tr class="even">
+<td align="left">Crested.auklet</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">6000</td>
+<td align="right">28000</td>
+</tr>
+<tr class="odd">
+<td align="left">Least.auklet</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">23000</td>
+<td align="right">250000</td>
+</tr>
+<tr class="even">
+<td align="left">Razorbill</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">4296</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">Manx.shearwater</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">260000</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">Storm.petrel</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">12920</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">Herring.gull</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">7600</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">Great.black-backed.gull</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">314</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">Lesser.black.backed.gull</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">20000</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+<div id="tabla-de-frecuencias-relativas" class="section level3">
+<h3>Tabla de frecuencias relativas</h3>
+<pre class="r"><code># Create table of relative frecuencies
+n &lt;- sum(table_N) # total observed birds
+table_F &lt;- table_N/n # relative frequencies
+
+##
+# For printing relative f. data without leading zeros
+# there is a solution here:
+# https://stackoverflow.com/questions/53740145/remove-leading-zeros-in-numbers-within-a-data-frame
+# Apply it if there is enough time
+# (you will have first to prettyformat the numbers)
+##
+
+# Function for dropping leading zeros befor decimal point
+# Returns a data.frame of character values
+drop.leading.0 &lt;- function(dataf) {
+  prettified_t &lt;- format(round(dataf, digits = 6), # round to this decimal
+                         zero.print = &quot;0&quot;) # What to print when the result is zero
+  tableF2 &lt;- data.frame(lapply(prettified_t,
+                         function(x) gsub(&quot;^0\\.&quot;, &quot;\\.&quot;, gsub(&quot;^-0\\.&quot;, &quot;-\\.&quot;, as.character(x)))),
+                  stringsAsFactors = FALSE, row.names = row.names(prettified_t))
+  tableF2
+}
+
+kable(
+  drop.leading.0(table_F),
+  row.names = TRUE,
+  caption = &quot;Tabla de frecuencias relativas de cada especie en cada localización, redondeadas al quinto decimal.&quot;,
+  align = c(rep('c', 9)) # To center the zeroes (prettier table)
+)</code></pre>
+<table>
+<caption>Tabla de frecuencias relativas de cada especie en cada localización, redondeadas al quinto decimal.</caption>
+<thead>
+<tr class="header">
+<th></th>
+<th align="center">CH</th>
+<th align="center">PLI</th>
+<th align="center">CI</th>
+<th align="center">NS</th>
+<th align="center">CL</th>
+<th align="center">CT</th>
+<th align="center">SI</th>
+<th align="center">SPI</th>
+<th align="center">SGI</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td align="center">0</td>
+<td align="center">.026018</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">.000047</td>
+<td align="center">.000147</td>
+<td align="center">.014688</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td align="center">.000031</td>
+<td align="center">.000084</td>
+<td align="center">.000031</td>
+<td align="center">.000057</td>
+<td align="center">.000010</td>
+<td align="center">.000063</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td align="center">.008393</td>
+<td align="center">.012170</td>
+<td align="center">.012589</td>
+<td align="center">.001584</td>
+<td align="center">.005246</td>
+<td align="center">.005560</td>
+<td align="center">.001049</td>
+<td align="center">.006505</td>
+<td align="center">.015107</td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">.000462</td>
+<td align="center">.046161</td>
+</tr>
+<tr class="odd">
+<td>5</td>
+<td align="center">.058751</td>
+<td align="center">.036090</td>
+<td align="center">.067144</td>
+<td align="center">.000084</td>
+<td align="center">.006295</td>
+<td align="center">.049010</td>
+<td align="center">0</td>
+<td align="center">.023081</td>
+<td align="center">.314737</td>
+</tr>
+<tr class="even">
+<td>6</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">.008771</td>
+<td align="center">.014688</td>
+<td align="center">.032674</td>
+<td align="center">.001116</td>
+<td align="center">.008183</td>
+<td align="center">.039867</td>
+</tr>
+<tr class="odd">
+<td>7</td>
+<td align="center">.000042</td>
+<td align="center">.001679</td>
+<td align="center">.000042</td>
+<td align="center">0</td>
+<td align="center">.000036</td>
+<td align="center">.000001</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+</tr>
+<tr class="even">
+<td>8</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">.000003</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+</tr>
+<tr class="odd">
+<td>9</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">.000669</td>
+<td align="center">.000304</td>
+<td align="center">.000313</td>
+<td align="center">0</td>
+<td align="center">.000923</td>
+<td align="center">.005875</td>
+</tr>
+<tr class="even">
+<td>10</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">.000009</td>
+<td align="center">.000004</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">.000210</td>
+<td align="center">.001259</td>
+</tr>
+<tr class="odd">
+<td>11</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">.003357</td>
+<td align="center">0</td>
+<td align="center">0</td>
+</tr>
+<tr class="even">
+<td>12</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">.000109</td>
+<td align="center">.000016</td>
+<td align="center">.000010</td>
+<td align="center">.000006</td>
+<td align="center">0</td>
+<td align="center">0</td>
+</tr>
+<tr class="odd">
+<td>13</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">.000525</td>
+<td align="center">.001049</td>
+</tr>
+<tr class="even">
+<td>14</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">.000006</td>
+<td align="center">0</td>
+<td align="center">0</td>
+</tr>
+<tr class="odd">
+<td>15</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">.000014</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">.007134</td>
+<td align="center">.031474</td>
+</tr>
+<tr class="even">
+<td>16</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">.001259</td>
+<td align="center">.005875</td>
+</tr>
+<tr class="odd">
+<td>17</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">.004826</td>
+<td align="center">.052456</td>
+</tr>
+<tr class="even">
+<td>18</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">.000901</td>
+<td align="center">0</td>
+<td align="center">0</td>
+</tr>
+<tr class="odd">
+<td>19</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">.054554</td>
+<td align="center">0</td>
+<td align="center">0</td>
+</tr>
+<tr class="even">
+<td>20</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">.002711</td>
+<td align="center">0</td>
+<td align="center">0</td>
+</tr>
+<tr class="odd">
+<td>21</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">.001595</td>
+<td align="center">0</td>
+<td align="center">0</td>
+</tr>
+<tr class="even">
+<td>22</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">.000066</td>
+<td align="center">0</td>
+<td align="center">0</td>
+</tr>
+<tr class="odd">
+<td>23</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">.004196</td>
+<td align="center">0</td>
+<td align="center">0</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="tabla-con-frecuencias-marginales" class="section level2">
+<h2>Tabla con frecuencias marginales</h2>
+<pre class="r"><code># Design table
+table_M &lt;- table_F
+table_M$Suma &lt;- apply(table_M, 1, sum) # Add row margin
+table_M &lt;- rbind(table_M, # Add columns margin
+                      Suma = apply(table_M, 2, sum))
+
+# Print table
+kable(
+  drop.leading.0(table_M),
+  row.names = TRUE,
+  caption = &quot;Tabla de frecuencias relativas más las frecuencias marginales para filas y columnas.&quot;,
+  align = c(rep('c', 9)) # To center the zeroes (prettier table)
+)</code></pre>
+<table>
+<caption>Tabla de frecuencias relativas más las frecuencias marginales para filas y columnas.</caption>
+<thead>
+<tr class="header">
+<th></th>
+<th align="center">CH</th>
+<th align="center">PLI</th>
+<th align="center">CI</th>
+<th align="center">NS</th>
+<th align="center">CL</th>
+<th align="center">CT</th>
+<th align="center">SI</th>
+<th align="center">SPI</th>
+<th align="center">SGI</th>
+<th align="center">Suma</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td align="center">0</td>
+<td align="center">.026018</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">.000047</td>
+<td align="center">.000147</td>
+<td align="center">.014688</td>
+<td align="center">.040900</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td align="center">.000031</td>
+<td align="center">.000084</td>
+<td align="center">.000031</td>
+<td align="center">.000057</td>
+<td align="center">.000010</td>
+<td align="center">.000063</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">.000278</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td align="center">.008393</td>
+<td align="center">.012170</td>
+<td align="center">.012589</td>
+<td align="center">.001584</td>
+<td align="center">.005246</td>
+<td align="center">.005560</td>
+<td align="center">.001049</td>
+<td align="center">.006505</td>
+<td align="center">.015107</td>
+<td align="center">.068203</td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">.000462</td>
+<td align="center">.046161</td>
+<td align="center">.046623</td>
+</tr>
+<tr class="odd">
+<td>5</td>
+<td align="center">.058751</td>
+<td align="center">.036090</td>
+<td align="center">.067144</td>
+<td align="center">.000084</td>
+<td align="center">.006295</td>
+<td align="center">.049010</td>
+<td align="center">0</td>
+<td align="center">.023081</td>
+<td align="center">.314737</td>
+<td align="center">.555191</td>
+</tr>
+<tr class="even">
+<td>6</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">.008771</td>
+<td align="center">.014688</td>
+<td align="center">.032674</td>
+<td align="center">.001116</td>
+<td align="center">.008183</td>
+<td align="center">.039867</td>
+<td align="center">.105298</td>
+</tr>
+<tr class="odd">
+<td>7</td>
+<td align="center">.000042</td>
+<td align="center">.001679</td>
+<td align="center">.000042</td>
+<td align="center">0</td>
+<td align="center">.000036</td>
+<td align="center">.000001</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">.001799</td>
+</tr>
+<tr class="even">
+<td>8</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">.000003</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">.000003</td>
+</tr>
+<tr class="odd">
+<td>9</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">.000669</td>
+<td align="center">.000304</td>
+<td align="center">.000313</td>
+<td align="center">0</td>
+<td align="center">.000923</td>
+<td align="center">.005875</td>
+<td align="center">.008085</td>
+</tr>
+<tr class="even">
+<td>10</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">.000009</td>
+<td align="center">.000004</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">.000210</td>
+<td align="center">.001259</td>
+<td align="center">.001482</td>
+</tr>
+<tr class="odd">
+<td>11</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">.003357</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">.003357</td>
+</tr>
+<tr class="even">
+<td>12</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">.000109</td>
+<td align="center">.000016</td>
+<td align="center">.000010</td>
+<td align="center">.000006</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">.000141</td>
+</tr>
+<tr class="odd">
+<td>13</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">.000525</td>
+<td align="center">.001049</td>
+<td align="center">.001574</td>
+</tr>
+<tr class="even">
+<td>14</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">.000006</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">.000006</td>
+</tr>
+<tr class="odd">
+<td>15</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">.000014</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">.007134</td>
+<td align="center">.031474</td>
+<td align="center">.038621</td>
+</tr>
+<tr class="even">
+<td>16</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">.001259</td>
+<td align="center">.005875</td>
+<td align="center">.007134</td>
+</tr>
+<tr class="odd">
+<td>17</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">.004826</td>
+<td align="center">.052456</td>
+<td align="center">.057282</td>
+</tr>
+<tr class="even">
+<td>18</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">.000901</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">.000901</td>
+</tr>
+<tr class="odd">
+<td>19</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">.054554</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">.054554</td>
+</tr>
+<tr class="even">
+<td>20</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">.002711</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">.002711</td>
+</tr>
+<tr class="odd">
+<td>21</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">.001595</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">.001595</td>
+</tr>
+<tr class="even">
+<td>22</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">.000066</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">.000066</td>
+</tr>
+<tr class="odd">
+<td>23</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">.004196</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">.004196</td>
+</tr>
+<tr class="even">
+<td>24</td>
+<td align="center">.067217</td>
+<td align="center">.076040</td>
+<td align="center">.079807</td>
+<td align="center">.011296</td>
+<td align="center">.026599</td>
+<td align="center">.087634</td>
+<td align="center">.069605</td>
+<td align="center">.053253</td>
+<td align="center">.528548</td>
+<td align="center">1.000000</td>
+</tr>
+</tbody>
+</table>
+<div id="matriz-de-perfiles" class="section level3">
+<h3>Matriz de perfiles</h3>
+<pre class="r"><code># Frecuencias relativas condicionadas por filas
+table_P &lt;- sweep(table_F, 1, table_M$Suma, &quot;/&quot;) 
+
+kable(
+  drop.leading.0(table_P),
+  caption = &quot;Matriz de perfiles&quot;,
+  row.names = TRUE,
+  align = c(rep('c', 9)) # To center the zeroes (prettier table)
+)</code></pre>
+<table>
+<caption>Matriz de perfiles</caption>
+<thead>
+<tr class="header">
+<th></th>
+<th align="center">CH</th>
+<th align="center">PLI</th>
+<th align="center">CI</th>
+<th align="center">NS</th>
+<th align="center">CL</th>
+<th align="center">CT</th>
+<th align="center">SI</th>
+<th align="center">SPI</th>
+<th align="center">SGI</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td align="center">0</td>
+<td align="center">0.026018</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0.000862</td>
+<td align="center">0.162942</td>
+<td align="center">0.256410</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td align="center">.113293</td>
+<td align="center">0.002052</td>
+<td align="center">.000031</td>
+<td align="center">.013700</td>
+<td align="center">0.159236</td>
+<td align="center">0.039474</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td align="center">.123058</td>
+<td align="center">43.806647</td>
+<td align="center">.307812</td>
+<td align="center">.001584</td>
+<td align="center">1.250000</td>
+<td align="center">84.394904</td>
+<td align="center">0.657895</td>
+<td align="center">2.399381</td>
+<td align="center">0.276923</td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0.289474</td>
+<td align="center">17.027864</td>
+</tr>
+<tr class="odd">
+<td>5</td>
+<td align="center">.105821</td>
+<td align="center">0.774077</td>
+<td align="center">.984464</td>
+<td align="center">.302115</td>
+<td align="center">0.153906</td>
+<td align="center">0.049010</td>
+<td align="center">0</td>
+<td align="center">350.318471</td>
+<td align="center">197.368421</td>
+</tr>
+<tr class="even">
+<td>6</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">.128596</td>
+<td align="center">52.870091</td>
+<td align="center">0.798870</td>
+<td align="center">0.001116</td>
+<td align="center">1.950000</td>
+<td align="center">605.095541</td>
+</tr>
+<tr class="odd">
+<td>7</td>
+<td align="center">.023326</td>
+<td align="center">0.015941</td>
+<td align="center">.000076</td>
+<td align="center">0</td>
+<td align="center">0.000523</td>
+<td align="center">0.003021</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+</tr>
+<tr class="even">
+<td>8</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0.000043</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+</tr>
+<tr class="odd">
+<td>9</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">.006349</td>
+<td align="center">0.000548</td>
+<td align="center">0.006724</td>
+<td align="center">0</td>
+<td align="center">3.323263</td>
+<td align="center">0.143646</td>
+</tr>
+<tr class="even">
+<td>10</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">.004782</td>
+<td align="center">0.000040</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0.003076</td>
+<td align="center">4.531722</td>
+</tr>
+<tr class="odd">
+<td>11</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0.006047</td>
+<td align="center">0</td>
+<td align="center">0</td>
+</tr>
+<tr class="even">
+<td>12</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">.013444</td>
+<td align="center">5.571429</td>
+<td align="center">0.005365</td>
+<td align="center">0.000056</td>
+<td align="center">0</td>
+<td align="center">0</td>
+</tr>
+<tr class="odd">
+<td>13</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0.004982</td>
+<td align="center">0.001890</td>
+</tr>
+<tr class="even">
+<td>14</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">2.142857</td>
+<td align="center">0</td>
+<td align="center">0</td>
+</tr>
+<tr class="odd">
+<td>15</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">.097015</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">2428.571429</td>
+<td align="center">17.494752</td>
+</tr>
+<tr class="even">
+<td>16</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0.155723</td>
+<td align="center">2000.000000</td>
+</tr>
+<tr class="odd">
+<td>17</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">3.257329</td>
+<td align="center">6.488451</td>
+</tr>
+<tr class="even">
+<td>18</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">6.411940</td>
+<td align="center">0</td>
+<td align="center">0</td>
+</tr>
+<tr class="odd">
+<td>19</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">34.666667</td>
+<td align="center">0</td>
+<td align="center">0</td>
+</tr>
+<tr class="even">
+<td>20</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">430.666667</td>
+<td align="center">0</td>
+<td align="center">0</td>
+</tr>
+<tr class="odd">
+<td>21</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0.041290</td>
+<td align="center">0</td>
+<td align="center">0</td>
+</tr>
+<tr class="even">
+<td>22</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0.009235</td>
+<td align="center">0</td>
+<td align="center">0</td>
+</tr>
+<tr class="odd">
+<td>23</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0.073260</td>
+<td align="center">0</td>
+<td align="center">0</td>
+</tr>
+</tbody>
+</table>
 <!-- # Apéndice A: Código -->
 <!-- El documento original en formato .Rmd, que incluye el código completo en lenguaje R usado para generar este informe, se puede consultar y descargar en el siguiente repositorio de Github: -->
 <!-- [jorgevallejo/RNAseq_analysis_PEC2](https://github.com/jorgevallejo/RNAseq_analysis_PEC2) -->
@@ -327,11 +1647,16 @@ kable(
 <!-- sessionInfo() # For better reproducibility -->
 <!-- ``` -->
 </div>
+</div>
+</div>
 <div id="referencias" class="section level1 unnumbered">
 <h1>Referencias</h1>
 <div id="refs" class="references">
 <div id="ref-hunt1986reproductive">
 <p>Hunt Jr, George L, Zoe A Eppley, and David C Schneider. 1986. “Reproductive Performance of Seabirds: The Importance of Population and Colony Size.” <em>The Auk</em> 103 (2). Oxford University Press: 306–17.</p>
+</div>
+<div id="ref-krebs2014">
+<p>Krebs, C.J. 2014. “Ecological Methodology, 3rd Ed. (in Prep).” <a href="https://www.zoology.ubc.ca/~krebs/books.html" class="uri">https://www.zoology.ubc.ca/~krebs/books.html</a>.</p>
 </div>
 </div>
 </div>
