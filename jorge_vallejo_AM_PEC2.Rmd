@@ -222,6 +222,7 @@ kable(
 
 ## Ejercicio 1b. Calcular la matriz de distancias ji-cuadrado entre los perfiles de las columnas y su inercia total.
 
+### Matriz de distancias ji-cuadrado entre columnas
 
 ```{r ji-sq distances matrix}
 ncols <- ncol(table_N)
@@ -244,6 +245,18 @@ D2_chisq,
 digits = 5,
 caption = "Matriz de distancias ji-cuadrado entre columnas",
   align = c(rep('c', 9)))
+```
+
+
+
+### Inercia total de la tabla
+
+```{r inercia total}
+# X^2 es el valor del test estadistico chi-cuadrado
+# n es la suma de todos los valores de la tabla de contingencia
+
+# Si la inercia total es igual a X^2/n:
+chisq.test(table_N)$statistic[[1]]/n
 ```
 
 
