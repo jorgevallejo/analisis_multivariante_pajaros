@@ -79,6 +79,7 @@ library(MASS) # plots with geometrically equal scales
 # library(corrplot)
 # library(scatterplot3d)
 # library(MVN)
+library(ca) # correspondence analysis
 ```
 
 # Ejercicio 1. Los pájaros de Hunt (_et al_.)
@@ -265,7 +266,7 @@ chisq.test(table_N)$statistic[[1]]/n
 
 ### Escalado multidimensional
 
-Usaremos la función `cmds()` para realizar el escalado sobre la matriz de distancias entre los perfiles.
+Usaremos la función `cmdscale()` para realizar el escalado sobre la matriz de distancias entre los perfiles.
 
 ```{r escalado multidimensional}
 MDS_seabirds_columns <- cmdscale(sqrt(D2_chisq), 
@@ -307,6 +308,67 @@ text(MDS_seabirds_columns$points[,1],MDS_seabirds_columns$points[,2],labels=coln
 ```
 
 Vemos que la primera coordenada principal está dominada por la distancia entre SI (Skomer Island) y el resto de columnas, que se distancian poco entre sí. Sin embargo, la segunda coordenada principal describe una separación gradual y poco brusca entre todas las columnas, siendo CH y CI (Cape Hay y Caburg Island) las columnas más parecidas entre sí y NS-PLI (North Shields y Prince Leopold Island) las columnas más alejadas en la segunda coordenada.
+
+
+## 1d. Realizar un análisis de correspondencias y calcular las inercias principales (en %) y la inercia total con los valores propios.
+
+Para este ejercicio utilizaremos el paquete 'ca' de R, específico para realizar análisis de correspondencias mediante descomposición de valores singulares.
+
+```{r CA analysis}
+CA_seabirds <- ca(table_F)
+```
+
+### Inercias principales (en %)
+
+```{r inercias principales}
+inertias <- summary(CA_seabirds)$scree
+inertias_p_seabirds <-data.frame(
+  'valores propios' = as.character(inertias[,1]),
+  'inercia' = as.character(sprintf("%.5g", inertias[,2])),
+  'porcentaje' = as.character(sprintf("%.2f%%", inertias[,3]))
+)
+  # summary(CA_seabirds)$scree)
+  
+kable(
+  t(inertias_p_seabirds),
+  align = (c(rep('c', 8))),
+  caption = "Tabla de inercias principales."
+)
+```
+
+### Inercia total
+
+```{r}
+sum(inertias[,2])
+```
+
+### Dibujar una representación simétrica del CA. A pesar de la confusión de nombres, ¿cuales son las especies que caracterizan a la colonia SI (Skomer Island, Irish Sea)?
+
+En la representación simétrica, tanto las filas como las columnas de la tabla de datos se representarán según sus coordenadas principales.
+
+```{r, fig.cap="Representación en coordenadas principales (simétrica) de colonias y especies."}
+CA_seabirds_plot <- plot(CA_seabirds)
+```
+
+Para las especies que caracterizan a la colonia en Skomer Island, filtraremos las coordenadas de las especies para aislar sólo las que estén cerca de SI en la gráfica:
+
+```{r}
+# Coordinates of colony SI
+CA_seabirds_plot$cols["SI",]
+# Little range around SI x coordinate
+range1 <- c(CA_seabirds_plot$cols["SI",1]*1.1,
+            CA_seabirds_plot$cols["SI",1]*0.9)
+# Filter species that are inside the range above
+kable(
+CA_seabirds_plot$rows[CA_seabirds_plot$rows[,"Dim1"] >= range1[1] & 
+                        CA_seabirds_plot$rows[,"Dim1"] <= range1[2],],
+caption = "Tabla con las especies de aves que caracterizan a la colonia en Smoker Island (SI), y los valores de sus coordenadas en la gráfica.",
+align = 'c'
+)
+```
+
+
+
 
 
 # Apéndice A: Código
