@@ -261,15 +261,17 @@ chisq.test(table_N)$statistic[[1]]/n
 
 
 
-<!-- # Apéndice A: Código -->
 
-<!-- El documento original en formato .Rmd, que incluye el código completo en lenguaje R usado para generar este informe, se puede consultar y descargar en el siguiente repositorio de Github: -->
-<!-- [jorgevallejo/RNAseq_analysis_PEC2](https://github.com/jorgevallejo/RNAseq_analysis_PEC2) -->
 
-<!-- # Apéndice B: Reproducibilidad {#apendiceB} -->
-<!-- ```{r session_info, include=TRUE, echo=TRUE, results='markup'} -->
-<!-- sessionInfo() # For better reproducibility -->
-<!-- ``` -->
+# Apéndice A: Código
+
+El documento original en formato .Rmd, que incluye el código completo en lenguaje R usado para generar este informe, se puede consultar y descargar en el siguiente repositorio de Github:
+[jorgevallejo/analisis_multivariante_pajaros](https://github.com/jorgevallejo/analisis_multivariante_pajaros)
+
+# Apéndice B: Reproducibilidad {#apendiceB}
+```{r session_info, include=TRUE, echo=TRUE, results='markup'}
+sessionInfo() # For better reproducibility
+```
 
 
 # Referencias
