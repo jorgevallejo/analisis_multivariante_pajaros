@@ -367,7 +367,7 @@ align = 'c'
 )
 ```
 
-
+Tengamos en cuenta sin embargo, que la gráfica simétrica es la proyección simultánea de gráficas diferentes (la de columnas y la de filas) y por tanto la cercanía de filas a columnas no puede ser interpretada directamente [@Greenacre]. En este caso, la interpretación parece correcta si atendemos a que las especies de la tabla anterior siguen un patrón de distanciamiento respecto al resto de especies igual al que sigue la colonia SI respecto al resto de colonias (muy distanciadas en la primera coordenada principal pero no en la segunda).
 
 
 
