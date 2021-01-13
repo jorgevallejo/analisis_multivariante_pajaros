@@ -370,35 +370,41 @@ align = 'c'
 Tengamos en cuenta sin embargo, que la gráfica simétrica es la proyección simultánea de gráficas diferentes (la de columnas y la de filas) y por tanto la cercanía de filas a columnas no puede ser interpretada directamente [@Greenacre]. En este caso, la interpretación parece correcta si atendemos a que las especies de la tabla anterior siguen un patrón de distanciamiento respecto al resto de especies igual al que sigue la colonia SI respecto al resto de colonias (muy distanciadas en la primera coordenada principal pero no en la segunda).
 
 
-## 1d. Calcular matrices de similaridad usando diferentes definiciones de la distancia de Canberra
+## 1d. Calcular matrices de similaridad entre columnas usando diferentes definiciones de la distancia de Canberra
 
+### Primera definición
+$$
+d_C(\mathbf{p,q}) = \sum_{i=1}^k \frac{|p_i - q_i|}{|p_i| + |q_i|}
+$$
 
-
-
-
-
-```{r ji-sq distances matrix, eval=FALSE, include=FALSE}
+```{r Canberra 1}
 ncols <- ncol(table_N)
 # Initialize matrix to store results
-D2_chisq <- matrix(0, ncols, ncols)
+Can1 <- matrix(0, ncols, ncols)
+# Names for distance matrix
+rownames(Can1) <- colnames(Can1) <- colnames(table_N)
 # Calculate distances
 for (i in 1:(ncols)){
   for (j in 1:ncols){
-    D2_chisq[i,j] <- t(table_Pc[,i ] - table_Pc[,j ]) %*%
-       diag(1 / rowSums(table_F)) %*% # Diagonal matrix from file margin
-      (table_Pc[, i] - table_Pc[, j])
+    # Check denominators that equal zero
+    denominators <- abs(table_N[,i ]) + abs(table_N[,j ])
+    numerators <- abs(table_N[,i ] - table_N[,j ])
+    zero_d <- which(denominators == 0)
+    Can1[i, j] <- sum(numerators[-zero_d]/
+                        denominators[-zero_d])
   }
 }
-# Names for distance matrix
-rownames(D2_chisq) <- colnames(D2_chisq) <- colnames(table_N)
+
 
 # Print table
 kable(
-D2_chisq,
-digits = 5,
-caption = "Matriz de distancias ji-cuadrado entre columnas",
+Can1,
+digits = 2,
+caption = "Matriz de distancias de Canberra usando la primera definición.",
   align = c(rep('c', 9)))
 ```
+
+No, evidentemente esta definición no nos llevará a la tabla 12.7 de Krebs. A simple vista ya vemos que si restamos las distancias a 1 (para hallar la similaridad) obtendremos valores negativos.
 
 
 # Apéndice A: Código
