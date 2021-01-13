@@ -72,7 +72,8 @@ file.remove(
 ```{r libraries, include=FALSE}
 # Load packages
 library(knitr)
-library(bookdown)
+# library(bookdown)
+library(MASS) # plots with geometrically equal scales
 # library(factoextra)
 # library(gridExtra)
 # library(corrplot)
@@ -260,7 +261,52 @@ chisq.test(table_N)$statistic[[1]]/n
 ```
 
 
+## 1c. Con la matriz de distancias ji-cuadrado entre los perfiles realizar un escalado multidimensional. Dibujar las coordenadas principales para las columnas.
 
+### Escalado multidimensional
+
+Usaremos la función `cmds()` para realizar el escalado sobre la matriz de distancias entre los perfiles.
+
+```{r escalado multidimensional}
+MDS_seabirds_columns <- cmdscale(sqrt(D2_chisq), 
+                                 k=8,
+                                 eig = TRUE)
+MDS_seabirds_columns$points
+```
+
+Si examinamos los valores propios:
+```{r}
+MDS_seabirds_columns$eig
+```
+
+Vemos que uno de los valores propios es negativo. Esto era de esperar, ya que las distancias son no Euclídeas.
+
+Para decidir cuántos vectores propios serían necesarios para recuperar suficiente información, usaremos los criterios sugeridos por Mardia buscando el primer valor por encima de 0.8:
+
+$P_m^{(1)}$: 
+```{r Pm1}
+cumsum(abs(MDS_seabirds_columns$eig)) / sum(abs(MDS_seabirds_columns$eig))
+```
+
+$P_m^{(2)}$:
+```{r Pm2}
+cumsum(abs(MDS_seabirds_columns$eig^2)) / sum(abs(MDS_seabirds_columns$eig^2))
+```
+
+Ambos criterios sugieren que dos vectores propios recogen la mayor parte de la información contenida en la matriz de distancias original. Esto nos permitirá una representación bastante fiel en un gráfico bidimensional.
+
+### Representación gráfica de las coordenadas principales
+```{r, fig.cap="Representación gráfica de las distancias ji-cuadrado entre las columas (lugares geográficos) de la base de datos seabirds."}
+
+# draw the graph
+eqscplot(MDS_seabirds_columns$points[, 1:2],ty="n",xlab="CP1",ylab="CP2")
+abline(v=0,h=0, col="gray",lty=4)
+# draw the columns
+text(MDS_seabirds_columns$points[,1],MDS_seabirds_columns$points[,2],labels=colnames(table_N),cex=0.8,
+     col = "blue")
+```
+
+Vemos que la primera coordenada principal está dominada por la distancia entre SI (Skomer Island) y el resto de columnas, que se distancian poco entre sí. Sin embargo, la segunda coordenada principal describe una separación gradual y poco brusca entre todas las columnas, siendo CH y CI (Cape Hay y Caburg Island) las columnas más parecidas entre sí y NS-PLI (North Shields y Prince Leopold Island) las columnas más alejadas en la segunda coordenada.
 
 
 # Apéndice A: Código
