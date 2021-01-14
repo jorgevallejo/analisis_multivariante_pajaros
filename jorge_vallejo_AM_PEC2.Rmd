@@ -453,7 +453,7 @@ caption = "Matriz de similaridades a partir de distancias de Canberra usando la 
 )
 ```
 
-Si la comparamos con la tabla 12.7 veremos que es casi igual. Hay pequeñas diferencias en los valores probablemente debidas a que para los cálculos de la tabla 12.7 los ceros de la matriz de frecuencias se han sustituido por el valor 0.1; mientras que en el algoritmo que hemos usado aquí hemos eliminado del sumatorio las divisiones con denominador igual a cero para evitar valores NaN.
+Si la comparamos con la tabla 12.7 veremos que es casi igual. Hay pequeñas diferencias en los valores probablemente debidas a que para los cálculos de la tabla 12.7 los ceros de la matriz de frecuencias se han sustituido por el valor 0.1 [@krebs2014]; mientras que en el algoritmo que hemos usado aquí hemos eliminado del sumatorio las divisiones con denominador igual a cero para evitar valores NaN.
 
 
 
