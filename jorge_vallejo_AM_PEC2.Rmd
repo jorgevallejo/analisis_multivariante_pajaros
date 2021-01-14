@@ -80,6 +80,8 @@ library(MASS) # plots with geometrically equal scales
 # library(scatterplot3d)
 # library(MVN)
 library(ca) # correspondence analysis
+library(vegan)
+library(ade4) # for function is.euclid
 ```
 
 # Ejercicio 1. Los pájaros de Hunt (_et al_.)
@@ -509,6 +511,75 @@ kable(
 Deducimos que esta tercera definición de distancia de Canberra es la que usa R, ya que ambas matrices son iguales[^2].
 
 [^2]: En realidad si las comparamos con la expresión `as.matrix(Can3) == as.matrix(CanR)` comprobaremos que varios de los valores son reconocidos como diferentes. No sé la razón con seguridad, pero probablemente se deba a diferencias de redondeo.
+
+
+## 1f. Realizar un MDS con la distancia de Canberra de **R**.
+
+Usaremos la función `cmdscale()` para realizar el escalado sobre la matriz de distancias entre columnas.
+
+```{r MDS from Canberra}
+# We are using here the distance matrix from function dist()
+MDS_CanR_columns <- cmdscale(CanR, 
+                                 k=8,
+                                 eig = TRUE)
+MDS_CanR_columns$points
+```
+
+### Comprobar que se trata de una distancia euclídea. 
+
+Si examinamos los valores propios:
+```{r}
+MDS_CanR_columns$eig
+```
+
+Vemos que el último valor propio es negativo pero también básicamente cero, así que no estoy seguro de si se puede interpretar como distancia no-euclídea.
+
+Podemos contrastarlo usando la función `is.euclid()` del paquete `ade4`:
+```{r}
+is.euclid(CanR)
+```
+
+La función `is.euclid()` utiliza un valor de tolerancia de 1e-07, así que interpreta el último valor propio como cero y, por tanto, acepta que la matriz es de distancias euclídeas.
+
+### Dibujar el mapa.
+
+Para decidir cuántos vectores propios serían necesarios para recuperar suficiente información, usaremos los criterios sugeridos por Mardia buscando el primer valor por encima de 0.8:
+
+$P_m^{(1)}$: 
+```{r Pm1 CanR}
+cumsum(abs(MDS_CanR_columns$eig)) / sum(abs(MDS_CanR_columns$eig))
+```
+
+$P_m^{(2)}$:
+```{r Pm2 CanR}
+cumsum(abs(MDS_CanR_columns$eig^2)) / sum(abs(MDS_CanR_columns$eig^2))
+```
+
+El primer criterio apunta a usar 3 ó 4 dimensiones, y el segundo a utilizar 3. Esto ya nos avisa de que usar una representación bidimensional probablemente nos ofrecerá una image deformada de las relaciones entre columnas. A pesar de eso usaremos sólo dos dimensiones para comparar esta gráfica con la obtenida por distancias ji-cuadrado.
+
+```{r, fig.cap="Representación gráfica de las distancias de Canberra entre las columas (lugares geográficos) de la base de datos seabirds."}
+
+# draw the graph
+eqscplot(MDS_CanR_columns$points[, 1:2],ty="n",xlab="CP1",ylab="CP2")
+abline(v=0,h=0, col="gray",lty=4)
+# draw the columns
+text(MDS_CanR_columns$points[,1],MDS_CanR_columns$points[,2],labels=colnames(table_N),cex=0.8,
+     col = "blue")
+```
+
+En general tiene poco que ver con la gráfica que obtuvimos de las distancias ji-cuadrado, aunque algunas características sí se mantienen. Por ejemplo, PLI-CI-CH siguen representados cerca unos de otros; así como CT-CL-NS, y SGI-SPI.
+
+### Comparar el resultado con el obtenido con la distancia ji-cuadrado. Utilizar la función procrustes() del paquete vegan.
+
+```{r, fig.cap= "Representación de la rotación de matrices necesaria para asemejar los resultados de la matriz de distancias de Canberra a los de la matriz de distancias ji-cuadrado."}
+proc <- procrustes(MDS_seabirds_columns$points[, 1:2], # target matrix
+                   MDS_CanR_columns$points[, 1:2] # matrix to be rotated
+                   )
+
+plot(proc)
+```
+
+
 
 # Apéndice A: Código
 
