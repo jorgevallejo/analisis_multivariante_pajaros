@@ -190,7 +190,7 @@ summary {
 <h1 class="title toc-ignore">Los pájaros de Hunt <em>(et al.)</em></h1>
 <h3 class="subtitle">Análisis Multivariante - PEC 2</h3>
 <h4 class="author">Jorge Vallejo Ortega</h4>
-<h4 class="date">13 de January, 2021</h4>
+<h4 class="date">14 de January, 2021</h4>
 
 </div>
 
@@ -214,6 +214,11 @@ summary {
 <li><a href="#inercias-principales-en">Inercias principales (en %)</a></li>
 <li><a href="#inercia-total">Inercia total</a></li>
 <li><a href="#dibujar-una-representación-simétrica-del-ca.-a-pesar-de-la-confusión-de-nombres-cuales-son-las-especies-que-caracterizan-a-la-colonia-si-skomer-island-irish-sea">Dibujar una representación simétrica del CA. A pesar de la confusión de nombres, ¿cuales son las especies que caracterizan a la colonia SI (Skomer Island, Irish Sea)?</a></li>
+</ul></li>
+<li><a href="#d.-calcular-matrices-de-similaridad-entre-columnas-usando-diferentes-definiciones-de-la-distancia-de-canberra">1d. Calcular matrices de similaridad entre columnas usando diferentes definiciones de la distancia de Canberra</a><ul>
+<li><a href="#primera-definición">Primera definición</a></li>
+<li><a href="#segunda-definición">Segunda definición</a></li>
+<li><a href="#tercera-definición">Tercera definición</a></li>
 </ul></li>
 </ul></li>
 <li><a href="#apéndice-a-código">Apéndice A: Código</a></li>
@@ -1651,10 +1656,10 @@ kable(
 </tbody>
 </table>
 <pre class="r"><code># Frecuencias relativas condicionadas por columnas
-table_Pc &lt;- sweep(table_F, 2, colSums(table_F), &quot;/&quot;) 
+table_N &lt;- sweep(table_F, 2, colSums(table_F), &quot;/&quot;) 
 
 kable(
-  drop.leading.0(table_Pc),
+  drop.leading.0(table_N),
   caption = &quot;Matriz de perfiles de columna&quot;,
   align = c(rep('c', 9)) # To center the zeroes (prettier table)
 )</code></pre>
@@ -1965,9 +1970,9 @@ D2_chisq &lt;- matrix(0, ncols, ncols)
 # Calculate distances
 for (i in 1:(ncols)){
   for (j in 1:ncols){
-    D2_chisq[i,j] &lt;- t(table_Pc[,i ] - table_Pc[,j ]) %*%
+    D2_chisq[i,j] &lt;- t(table_N[,i ] - table_N[,j ]) %*%
        diag(1 / rowSums(table_F)) %*% # Diagonal matrix from file margin
-      (table_Pc[, i] - table_Pc[, j])
+      (table_N[, i] - table_N[, j])
   }
 }
 # Names for distance matrix
@@ -2114,7 +2119,7 @@ caption = &quot;Matriz de distancias ji-cuadrado entre columnas&quot;,
 
 # Si la inercia total es igual a X^2/n:
 chisq.test(table_N)$statistic[[1]]/n</code></pre>
-<pre><code>## [1] 1.565692</code></pre>
+<pre><code>## [1] 3.809685e-06</code></pre>
 </div>
 </div>
 <div id="c.-con-la-matriz-de-distancias-ji-cuadrado-entre-los-perfiles-realizar-un-escalado-multidimensional.-dibujar-las-coordenadas-principales-para-las-columnas." class="section level2">
@@ -2322,6 +2327,758 @@ align = 'c'
 <p>Tengamos en cuenta sin embargo, que la gráfica simétrica es la proyección simultánea de gráficas diferentes (la de columnas y la de filas) y por tanto la cercanía de filas a columnas no puede ser interpretada directamente <span class="citation">(Greenacre 2017)</span>. En este caso, la interpretación parece correcta si atendemos a que las especies de la tabla anterior siguen un patrón de distanciamiento respecto al resto de especies igual al que sigue la colonia SI respecto al resto de colonias (muy distanciadas en la primera coordenada principal pero no en la segunda).</p>
 </div>
 </div>
+<div id="d.-calcular-matrices-de-similaridad-entre-columnas-usando-diferentes-definiciones-de-la-distancia-de-canberra" class="section level2">
+<h2>1d. Calcular matrices de similaridad entre columnas usando diferentes definiciones de la distancia de Canberra</h2>
+<div id="primera-definición" class="section level3">
+<h3>Primera definición</h3>
+<p><span class="math display">\[
+d_C(\mathbf{p,q}) = \sum_{i=1}^k \frac{|p_i - q_i|}{|p_i| + |q_i|}
+\]</span></p>
+<pre class="r"><code>ncols &lt;- ncol(table_N)
+# Initialize matrix to store results
+Can1 &lt;- matrix(0, ncols, ncols)
+# Names for distance matrix
+rownames(Can1) &lt;- colnames(Can1) &lt;- colnames(table_N)
+# Calculate distances
+for (i in 1:(ncols)){
+  for (j in 1:ncols){
+    # Check denominators that equal zero
+    denominators &lt;- abs(table_N[,i ]) + abs(table_N[,j ])
+    numerators &lt;- abs(table_N[,i ] - table_N[,j ])
+    zero_d &lt;- which(denominators == 0)
+    Can1[i, j] &lt;- sum(numerators[-zero_d]/
+                        denominators[-zero_d])
+  }
+}
+
+
+# Print table
+kable(
+Can1,
+digits = 2,
+caption = &quot;Matriz de distancias de Canberra usando la primera definición.&quot;,
+  align = c(rep('c', 9)))</code></pre>
+<table>
+<caption>Matriz de distancias de Canberra usando la primera definición.</caption>
+<thead>
+<tr class="header">
+<th></th>
+<th align="center">CH</th>
+<th align="center">PLI</th>
+<th align="center">CI</th>
+<th align="center">NS</th>
+<th align="center">CL</th>
+<th align="center">CT</th>
+<th align="center">SI</th>
+<th align="center">SPI</th>
+<th align="center">SGI</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>CH</td>
+<td align="center">0.00</td>
+<td align="center">2.77</td>
+<td align="center">0.31</td>
+<td align="center">7.87</td>
+<td align="center">5.25</td>
+<td align="center">5.73</td>
+<td align="center">14.78</td>
+<td align="center">11.35</td>
+<td align="center">11.82</td>
+</tr>
+<tr class="even">
+<td>PLI</td>
+<td align="center">2.77</td>
+<td align="center">0.00</td>
+<td align="center">2.71</td>
+<td align="center">8.68</td>
+<td align="center">6.80</td>
+<td align="center">6.72</td>
+<td align="center">14.82</td>
+<td align="center">11.16</td>
+<td align="center">11.66</td>
+</tr>
+<tr class="odd">
+<td>CI</td>
+<td align="center">0.31</td>
+<td align="center">2.71</td>
+<td align="center">0.00</td>
+<td align="center">7.90</td>
+<td align="center">5.11</td>
+<td align="center">5.88</td>
+<td align="center">14.83</td>
+<td align="center">11.45</td>
+<td align="center">11.86</td>
+</tr>
+<tr class="even">
+<td>NS</td>
+<td align="center">7.87</td>
+<td align="center">8.68</td>
+<td align="center">7.90</td>
+<td align="center">0.00</td>
+<td align="center">6.35</td>
+<td align="center">8.32</td>
+<td align="center">16.75</td>
+<td align="center">10.91</td>
+<td align="center">11.62</td>
+</tr>
+<tr class="odd">
+<td>CL</td>
+<td align="center">5.25</td>
+<td align="center">6.80</td>
+<td align="center">5.11</td>
+<td align="center">6.35</td>
+<td align="center">0.00</td>
+<td align="center">5.61</td>
+<td align="center">16.56</td>
+<td align="center">11.22</td>
+<td align="center">11.83</td>
+</tr>
+<tr class="even">
+<td>CT</td>
+<td align="center">5.73</td>
+<td align="center">6.72</td>
+<td align="center">5.88</td>
+<td align="center">8.32</td>
+<td align="center">5.61</td>
+<td align="center">0.00</td>
+<td align="center">15.67</td>
+<td align="center">12.52</td>
+<td align="center">12.59</td>
+</tr>
+<tr class="odd">
+<td>SI</td>
+<td align="center">14.78</td>
+<td align="center">14.82</td>
+<td align="center">14.83</td>
+<td align="center">16.75</td>
+<td align="center">16.56</td>
+<td align="center">15.67</td>
+<td align="center">0.00</td>
+<td align="center">19.20</td>
+<td align="center">18.91</td>
+</tr>
+<tr class="even">
+<td>SPI</td>
+<td align="center">11.35</td>
+<td align="center">11.16</td>
+<td align="center">11.45</td>
+<td align="center">10.91</td>
+<td align="center">11.22</td>
+<td align="center">12.52</td>
+<td align="center">19.20</td>
+<td align="center">0.00</td>
+<td align="center">4.68</td>
+</tr>
+<tr class="odd">
+<td>SGI</td>
+<td align="center">11.82</td>
+<td align="center">11.66</td>
+<td align="center">11.86</td>
+<td align="center">11.62</td>
+<td align="center">11.83</td>
+<td align="center">12.59</td>
+<td align="center">18.91</td>
+<td align="center">4.68</td>
+<td align="center">0.00</td>
+</tr>
+</tbody>
+</table>
+<p>No, evidentemente esta definición no nos llevará a la tabla 12.7 de Krebs. A simple vista ya vemos que si restamos las distancias a 1 (para hallar la similaridad) obtendremos valores negativos.</p>
+</div>
+<div id="segunda-definición" class="section level3">
+<h3>Segunda definición</h3>
+<p><span class="math display">\[
+d_C(\mathbf{p,q}) = \frac{1}{k} \sum_{i=1}^k \frac{|p_i - q_i|}{|p_i| + |q_i|}
+\]</span></p>
+<pre class="r"><code>ncols &lt;- ncol(table_N)
+nrows &lt;- nrow(table_N)
+# Initialize matrix to store results
+Can2 &lt;- matrix(0, ncols, ncols)
+# Names for distance matrix
+rownames(Can2) &lt;- colnames(Can2) &lt;- colnames(table_N)
+# Calculate distances
+for (i in 1:(ncols)){
+  for (j in 1:ncols){
+    # Check denominators that equal zero
+    denominators &lt;- abs(table_N[,i ]) + abs(table_N[,j ])
+    numerators &lt;- abs(table_N[,i ] - table_N[,j ])
+    zero_d &lt;- which(denominators == 0)
+    Can2[i, j] &lt;- sum(numerators[-zero_d]/
+                        denominators[-zero_d])/nrows
+  }
+}
+
+
+# Print table
+kable(
+Can2,
+digits = 2,
+caption = &quot;Matriz de distancias de Canberra usando la segunda definición.&quot;,
+  align = c(rep('c', 9)))</code></pre>
+<table>
+<caption>Matriz de distancias de Canberra usando la segunda definición.</caption>
+<thead>
+<tr class="header">
+<th></th>
+<th align="center">CH</th>
+<th align="center">PLI</th>
+<th align="center">CI</th>
+<th align="center">NS</th>
+<th align="center">CL</th>
+<th align="center">CT</th>
+<th align="center">SI</th>
+<th align="center">SPI</th>
+<th align="center">SGI</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>CH</td>
+<td align="center">0.00</td>
+<td align="center">0.12</td>
+<td align="center">0.01</td>
+<td align="center">0.34</td>
+<td align="center">0.23</td>
+<td align="center">0.25</td>
+<td align="center">0.64</td>
+<td align="center">0.49</td>
+<td align="center">0.51</td>
+</tr>
+<tr class="even">
+<td>PLI</td>
+<td align="center">0.12</td>
+<td align="center">0.00</td>
+<td align="center">0.12</td>
+<td align="center">0.38</td>
+<td align="center">0.30</td>
+<td align="center">0.29</td>
+<td align="center">0.64</td>
+<td align="center">0.49</td>
+<td align="center">0.51</td>
+</tr>
+<tr class="odd">
+<td>CI</td>
+<td align="center">0.01</td>
+<td align="center">0.12</td>
+<td align="center">0.00</td>
+<td align="center">0.34</td>
+<td align="center">0.22</td>
+<td align="center">0.26</td>
+<td align="center">0.64</td>
+<td align="center">0.50</td>
+<td align="center">0.52</td>
+</tr>
+<tr class="even">
+<td>NS</td>
+<td align="center">0.34</td>
+<td align="center">0.38</td>
+<td align="center">0.34</td>
+<td align="center">0.00</td>
+<td align="center">0.28</td>
+<td align="center">0.36</td>
+<td align="center">0.73</td>
+<td align="center">0.47</td>
+<td align="center">0.51</td>
+</tr>
+<tr class="odd">
+<td>CL</td>
+<td align="center">0.23</td>
+<td align="center">0.30</td>
+<td align="center">0.22</td>
+<td align="center">0.28</td>
+<td align="center">0.00</td>
+<td align="center">0.24</td>
+<td align="center">0.72</td>
+<td align="center">0.49</td>
+<td align="center">0.51</td>
+</tr>
+<tr class="even">
+<td>CT</td>
+<td align="center">0.25</td>
+<td align="center">0.29</td>
+<td align="center">0.26</td>
+<td align="center">0.36</td>
+<td align="center">0.24</td>
+<td align="center">0.00</td>
+<td align="center">0.68</td>
+<td align="center">0.54</td>
+<td align="center">0.55</td>
+</tr>
+<tr class="odd">
+<td>SI</td>
+<td align="center">0.64</td>
+<td align="center">0.64</td>
+<td align="center">0.64</td>
+<td align="center">0.73</td>
+<td align="center">0.72</td>
+<td align="center">0.68</td>
+<td align="center">0.00</td>
+<td align="center">0.83</td>
+<td align="center">0.82</td>
+</tr>
+<tr class="even">
+<td>SPI</td>
+<td align="center">0.49</td>
+<td align="center">0.49</td>
+<td align="center">0.50</td>
+<td align="center">0.47</td>
+<td align="center">0.49</td>
+<td align="center">0.54</td>
+<td align="center">0.83</td>
+<td align="center">0.00</td>
+<td align="center">0.20</td>
+</tr>
+<tr class="odd">
+<td>SGI</td>
+<td align="center">0.51</td>
+<td align="center">0.51</td>
+<td align="center">0.52</td>
+<td align="center">0.51</td>
+<td align="center">0.51</td>
+<td align="center">0.55</td>
+<td align="center">0.82</td>
+<td align="center">0.20</td>
+<td align="center">0.00</td>
+</tr>
+</tbody>
+</table>
+<p>La tabla 12.7 en realidad es una tabla de similaridades, así que para transformar nuestra tabla de distancias en una de similaridas restaremos cada valor de la tabla a la unidad (1-C):</p>
+<pre class="r"><code>kable(
+matrix(1, nrow = 9, ncol = 9) - # matrix of ones
+  Can2, # distance matrix to be converted into similarities
+digits = 2,
+caption = &quot;Matriz de similaridades a partir de distancias de Canberra usando la segunda definición.&quot;,
+  align = c(rep('c', 9))
+)</code></pre>
+<table>
+<caption>Matriz de similaridades a partir de distancias de Canberra usando la segunda definición.</caption>
+<thead>
+<tr class="header">
+<th></th>
+<th align="center">CH</th>
+<th align="center">PLI</th>
+<th align="center">CI</th>
+<th align="center">NS</th>
+<th align="center">CL</th>
+<th align="center">CT</th>
+<th align="center">SI</th>
+<th align="center">SPI</th>
+<th align="center">SGI</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>CH</td>
+<td align="center">1.00</td>
+<td align="center">0.88</td>
+<td align="center">0.99</td>
+<td align="center">0.66</td>
+<td align="center">0.77</td>
+<td align="center">0.75</td>
+<td align="center">0.36</td>
+<td align="center">0.51</td>
+<td align="center">0.49</td>
+</tr>
+<tr class="even">
+<td>PLI</td>
+<td align="center">0.88</td>
+<td align="center">1.00</td>
+<td align="center">0.88</td>
+<td align="center">0.62</td>
+<td align="center">0.70</td>
+<td align="center">0.71</td>
+<td align="center">0.36</td>
+<td align="center">0.51</td>
+<td align="center">0.49</td>
+</tr>
+<tr class="odd">
+<td>CI</td>
+<td align="center">0.99</td>
+<td align="center">0.88</td>
+<td align="center">1.00</td>
+<td align="center">0.66</td>
+<td align="center">0.78</td>
+<td align="center">0.74</td>
+<td align="center">0.36</td>
+<td align="center">0.50</td>
+<td align="center">0.48</td>
+</tr>
+<tr class="even">
+<td>NS</td>
+<td align="center">0.66</td>
+<td align="center">0.62</td>
+<td align="center">0.66</td>
+<td align="center">1.00</td>
+<td align="center">0.72</td>
+<td align="center">0.64</td>
+<td align="center">0.27</td>
+<td align="center">0.53</td>
+<td align="center">0.49</td>
+</tr>
+<tr class="odd">
+<td>CL</td>
+<td align="center">0.77</td>
+<td align="center">0.70</td>
+<td align="center">0.78</td>
+<td align="center">0.72</td>
+<td align="center">1.00</td>
+<td align="center">0.76</td>
+<td align="center">0.28</td>
+<td align="center">0.51</td>
+<td align="center">0.49</td>
+</tr>
+<tr class="even">
+<td>CT</td>
+<td align="center">0.75</td>
+<td align="center">0.71</td>
+<td align="center">0.74</td>
+<td align="center">0.64</td>
+<td align="center">0.76</td>
+<td align="center">1.00</td>
+<td align="center">0.32</td>
+<td align="center">0.46</td>
+<td align="center">0.45</td>
+</tr>
+<tr class="odd">
+<td>SI</td>
+<td align="center">0.36</td>
+<td align="center">0.36</td>
+<td align="center">0.36</td>
+<td align="center">0.27</td>
+<td align="center">0.28</td>
+<td align="center">0.32</td>
+<td align="center">1.00</td>
+<td align="center">0.17</td>
+<td align="center">0.18</td>
+</tr>
+<tr class="even">
+<td>SPI</td>
+<td align="center">0.51</td>
+<td align="center">0.51</td>
+<td align="center">0.50</td>
+<td align="center">0.53</td>
+<td align="center">0.51</td>
+<td align="center">0.46</td>
+<td align="center">0.17</td>
+<td align="center">1.00</td>
+<td align="center">0.80</td>
+</tr>
+<tr class="odd">
+<td>SGI</td>
+<td align="center">0.49</td>
+<td align="center">0.49</td>
+<td align="center">0.48</td>
+<td align="center">0.49</td>
+<td align="center">0.49</td>
+<td align="center">0.45</td>
+<td align="center">0.18</td>
+<td align="center">0.80</td>
+<td align="center">1.00</td>
+</tr>
+</tbody>
+</table>
+<p>Si la comparamos con la tabla 12.7 veremos que es casi igual. Hay pequeñas diferencias en los valores probablemente debidas a que para los cálculos de la tabla 12.7 los ceros de la matriz de frecuencias se han sustituido por el valor 0.1 <span class="citation">(Krebs 2014)</span>; mientras que en el algoritmo que hemos usado aquí hemos eliminado del sumatorio las divisiones con denominador igual a cero para evitar valores NaN.</p>
+</div>
+<div id="tercera-definición" class="section level3">
+<h3>Tercera definición</h3>
+<p><span class="math display">\[
+d_C(\mathbf{p,q}) = \frac{k}{k - n_z} \sum_{i=1}^k \frac{|p_i - q_i|}{|p_i| + |q_i|}
+\]</span></p>
+<pre class="r"><code>ncols &lt;- ncol(table_N)
+nrows &lt;- nrow(table_N)
+# Initialize matrix to store results
+Can3 &lt;- matrix(0, ncols, ncols)
+# Names for distance matrix
+rownames(Can3) &lt;- colnames(Can3) &lt;- colnames(table_N)
+# Calculate distances
+for (i in 1:(ncols)){
+  for (j in 1:ncols){
+    # Check denominators that equal zero
+    denominators &lt;- abs(table_N[,i ]) + abs(table_N[,j ])
+    numerators &lt;- abs(table_N[,i ] - table_N[,j ])
+    zero_d &lt;- which(denominators == 0)
+    Can3[i, j] &lt;- sum(numerators[-zero_d]/
+                        denominators[-zero_d])*
+      (nrows/(nrows-length(zero_d))) # The more zeroes, the bigger the distance
+  }
+}
+
+
+# Print table
+kable(
+Can3,
+digits = 2,
+caption = &quot;Matriz de distancias de Canberra usando la tercera definición.&quot;,
+  align = c(rep('c', 9)))</code></pre>
+<table>
+<caption>Matriz de distancias de Canberra usando la tercera definición.</caption>
+<thead>
+<tr class="header">
+<th></th>
+<th align="center">CH</th>
+<th align="center">PLI</th>
+<th align="center">CI</th>
+<th align="center">NS</th>
+<th align="center">CL</th>
+<th align="center">CT</th>
+<th align="center">SI</th>
+<th align="center">SPI</th>
+<th align="center">SGI</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>CH</td>
+<td align="center">0.00</td>
+<td align="center">12.74</td>
+<td align="center">1.76</td>
+<td align="center">20.12</td>
+<td align="center">15.09</td>
+<td align="center">16.46</td>
+<td align="center">22.67</td>
+<td align="center">20.08</td>
+<td align="center">20.91</td>
+</tr>
+<tr class="even">
+<td>PLI</td>
+<td align="center">12.74</td>
+<td align="center">0.00</td>
+<td align="center">12.48</td>
+<td align="center">19.96</td>
+<td align="center">17.37</td>
+<td align="center">17.19</td>
+<td align="center">22.73</td>
+<td align="center">19.75</td>
+<td align="center">20.63</td>
+</tr>
+<tr class="odd">
+<td>CI</td>
+<td align="center">1.76</td>
+<td align="center">12.48</td>
+<td align="center">0.00</td>
+<td align="center">20.18</td>
+<td align="center">14.69</td>
+<td align="center">16.91</td>
+<td align="center">22.73</td>
+<td align="center">20.25</td>
+<td align="center">20.99</td>
+</tr>
+<tr class="even">
+<td>NS</td>
+<td align="center">20.12</td>
+<td align="center">19.96</td>
+<td align="center">20.18</td>
+<td align="center">0.00</td>
+<td align="center">16.22</td>
+<td align="center">19.13</td>
+<td align="center">22.66</td>
+<td align="center">19.30</td>
+<td align="center">20.56</td>
+</tr>
+<tr class="odd">
+<td>CL</td>
+<td align="center">15.09</td>
+<td align="center">17.37</td>
+<td align="center">14.69</td>
+<td align="center">16.22</td>
+<td align="center">0.00</td>
+<td align="center">14.33</td>
+<td align="center">22.41</td>
+<td align="center">18.43</td>
+<td align="center">19.43</td>
+</tr>
+<tr class="even">
+<td>CT</td>
+<td align="center">16.46</td>
+<td align="center">17.19</td>
+<td align="center">16.91</td>
+<td align="center">19.13</td>
+<td align="center">14.33</td>
+<td align="center">0.00</td>
+<td align="center">21.20</td>
+<td align="center">19.19</td>
+<td align="center">19.30</td>
+</tr>
+<tr class="odd">
+<td>SI</td>
+<td align="center">22.67</td>
+<td align="center">22.73</td>
+<td align="center">22.73</td>
+<td align="center">22.66</td>
+<td align="center">22.41</td>
+<td align="center">21.20</td>
+<td align="center">0.00</td>
+<td align="center">22.08</td>
+<td align="center">21.75</td>
+</tr>
+<tr class="even">
+<td>SPI</td>
+<td align="center">20.08</td>
+<td align="center">19.75</td>
+<td align="center">20.25</td>
+<td align="center">19.30</td>
+<td align="center">18.43</td>
+<td align="center">19.19</td>
+<td align="center">22.08</td>
+<td align="center">0.00</td>
+<td align="center">9.78</td>
+</tr>
+<tr class="odd">
+<td>SGI</td>
+<td align="center">20.91</td>
+<td align="center">20.63</td>
+<td align="center">20.99</td>
+<td align="center">20.56</td>
+<td align="center">19.43</td>
+<td align="center">19.30</td>
+<td align="center">21.75</td>
+<td align="center">9.78</td>
+<td align="center">0.00</td>
+</tr>
+</tbody>
+</table>
+<p>Si comparamos esta matriz con la obtenida con la función <code>dist()</code> de R:</p>
+<pre class="r"><code>CanR &lt;- dist(t(table_N), # transposed because the function works with rows
+     method = &quot;canberra&quot;,
+     diag = TRUE)
+
+kable(
+  as.matrix(CanR),
+  digits = 2,
+  caption = &quot;Matriz de distancias según el método Canberra obtenida mediante la función dist() del paquete `stats`.&quot;
+)</code></pre>
+<table>
+<caption>Matriz de distancias según el método Canberra obtenida mediante la función dist() del paquete <code>stats</code>.</caption>
+<thead>
+<tr class="header">
+<th></th>
+<th align="right">CH</th>
+<th align="right">PLI</th>
+<th align="right">CI</th>
+<th align="right">NS</th>
+<th align="right">CL</th>
+<th align="right">CT</th>
+<th align="right">SI</th>
+<th align="right">SPI</th>
+<th align="right">SGI</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>CH</td>
+<td align="right">0.00</td>
+<td align="right">12.74</td>
+<td align="right">1.76</td>
+<td align="right">20.12</td>
+<td align="right">15.09</td>
+<td align="right">16.46</td>
+<td align="right">22.67</td>
+<td align="right">20.08</td>
+<td align="right">20.91</td>
+</tr>
+<tr class="even">
+<td>PLI</td>
+<td align="right">12.74</td>
+<td align="right">0.00</td>
+<td align="right">12.48</td>
+<td align="right">19.96</td>
+<td align="right">17.37</td>
+<td align="right">17.19</td>
+<td align="right">22.73</td>
+<td align="right">19.75</td>
+<td align="right">20.63</td>
+</tr>
+<tr class="odd">
+<td>CI</td>
+<td align="right">1.76</td>
+<td align="right">12.48</td>
+<td align="right">0.00</td>
+<td align="right">20.18</td>
+<td align="right">14.69</td>
+<td align="right">16.91</td>
+<td align="right">22.73</td>
+<td align="right">20.25</td>
+<td align="right">20.99</td>
+</tr>
+<tr class="even">
+<td>NS</td>
+<td align="right">20.12</td>
+<td align="right">19.96</td>
+<td align="right">20.18</td>
+<td align="right">0.00</td>
+<td align="right">16.22</td>
+<td align="right">19.13</td>
+<td align="right">22.66</td>
+<td align="right">19.30</td>
+<td align="right">20.56</td>
+</tr>
+<tr class="odd">
+<td>CL</td>
+<td align="right">15.09</td>
+<td align="right">17.37</td>
+<td align="right">14.69</td>
+<td align="right">16.22</td>
+<td align="right">0.00</td>
+<td align="right">14.33</td>
+<td align="right">22.41</td>
+<td align="right">18.43</td>
+<td align="right">19.43</td>
+</tr>
+<tr class="even">
+<td>CT</td>
+<td align="right">16.46</td>
+<td align="right">17.19</td>
+<td align="right">16.91</td>
+<td align="right">19.13</td>
+<td align="right">14.33</td>
+<td align="right">0.00</td>
+<td align="right">21.20</td>
+<td align="right">19.19</td>
+<td align="right">19.30</td>
+</tr>
+<tr class="odd">
+<td>SI</td>
+<td align="right">22.67</td>
+<td align="right">22.73</td>
+<td align="right">22.73</td>
+<td align="right">22.66</td>
+<td align="right">22.41</td>
+<td align="right">21.20</td>
+<td align="right">0.00</td>
+<td align="right">22.08</td>
+<td align="right">21.75</td>
+</tr>
+<tr class="even">
+<td>SPI</td>
+<td align="right">20.08</td>
+<td align="right">19.75</td>
+<td align="right">20.25</td>
+<td align="right">19.30</td>
+<td align="right">18.43</td>
+<td align="right">19.19</td>
+<td align="right">22.08</td>
+<td align="right">0.00</td>
+<td align="right">9.78</td>
+</tr>
+<tr class="odd">
+<td>SGI</td>
+<td align="right">20.91</td>
+<td align="right">20.63</td>
+<td align="right">20.99</td>
+<td align="right">20.56</td>
+<td align="right">19.43</td>
+<td align="right">19.30</td>
+<td align="right">21.75</td>
+<td align="right">9.78</td>
+<td align="right">0.00</td>
+</tr>
+</tbody>
+</table>
+<p>Deducimos que esta tercera definición de distancia de Canberra es la que usa R, ya que ambas matrices son iguales<a href="#fn2" class="footnoteRef" id="fnref2"><sup>2</sup></a>.</p>
+</div>
+</div>
 </div>
 <div id="apéndice-a-código" class="section level1">
 <h1>Apéndice A: Código</h1>
@@ -2376,6 +3133,7 @@ align = 'c'
 <hr />
 <ol>
 <li id="fn1"><p>Alternativamente, podríamos reordenar la base de datos para tener sólo tres variables; especie, lugar geográfico y número de individuos. Sin embargo, para los análisis que realizaremos más adelante resulta más cómodo considerar cada lugar geogŕafico como una variable diferente.<a href="#fnref1">↩</a></p></li>
+<li id="fn2"><p>En realidad si las comparamos con la expresión <code>as.matrix(Can3) == as.matrix(CanR)</code> comprobaremos que varios de los valores son reconocidos como diferentes. No sé la razón con seguridad, pero probablemente se deba a diferencias de redondeo.<a href="#fnref2">↩</a></p></li>
 </ol>
 </div>
 

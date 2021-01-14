@@ -460,13 +460,55 @@ Si la comparamos con la tabla 12.7 veremos que es casi igual. Hay pequeñas dife
 
 ### Tercera definición
 
+$$
+d_C(\mathbf{p,q}) = \frac{k}{k - n_z} \sum_{i=1}^k \frac{|p_i - q_i|}{|p_i| + |q_i|}
+$$
+
+```{r Canberra 3}
+ncols <- ncol(table_N)
+nrows <- nrow(table_N)
+# Initialize matrix to store results
+Can3 <- matrix(0, ncols, ncols)
+# Names for distance matrix
+rownames(Can3) <- colnames(Can3) <- colnames(table_N)
+# Calculate distances
+for (i in 1:(ncols)){
+  for (j in 1:ncols){
+    # Check denominators that equal zero
+    denominators <- abs(table_N[,i ]) + abs(table_N[,j ])
+    numerators <- abs(table_N[,i ] - table_N[,j ])
+    zero_d <- which(denominators == 0)
+    Can3[i, j] <- sum(numerators[-zero_d]/
+                        denominators[-zero_d])*
+      (nrows/(nrows-length(zero_d))) # The more zeroes, the bigger the distance
+  }
+}
 
 
+# Print table
+kable(
+Can3,
+digits = 2,
+caption = "Matriz de distancias de Canberra usando la tercera definición.",
+  align = c(rep('c', 9)))
+```
 
+Si comparamos esta matriz con la obtenida con la función `dist()` de R:
+```{r CanR}
+CanR <- dist(t(table_N), # transposed because the function works with rows
+     method = "canberra",
+     diag = TRUE)
 
+kable(
+  as.matrix(CanR),
+  digits = 2,
+  caption = "Matriz de distancias según el método Canberra obtenida mediante la función dist() del paquete `stats`."
+)
+```
 
+Deducimos que esta tercera definición de distancia de Canberra es la que usa R, ya que ambas matrices son iguales[^2].
 
-
+[^2]: En realidad si las comparamos con la expresión `as.matrix(Can3) == as.matrix(CanR)` comprobaremos que varios de los valores son reconocidos como diferentes. No sé la razón con seguridad, pero probablemente se deba a diferencias de redondeo.
 
 # Apéndice A: Código
 
