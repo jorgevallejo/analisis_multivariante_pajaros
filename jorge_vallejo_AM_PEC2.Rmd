@@ -211,10 +211,10 @@ kable(
 
 ```{r column profiles table}
 # Frecuencias relativas condicionadas por columnas
-table_Pc <- sweep(table_F, 2, colSums(table_F), "/") 
+table_N <- sweep(table_F, 2, colSums(table_F), "/") 
 
 kable(
-  drop.leading.0(table_Pc),
+  drop.leading.0(table_N),
   caption = "Matriz de perfiles de columna",
   align = c(rep('c', 9)) # To center the zeroes (prettier table)
 )
@@ -233,9 +233,9 @@ D2_chisq <- matrix(0, ncols, ncols)
 # Calculate distances
 for (i in 1:(ncols)){
   for (j in 1:ncols){
-    D2_chisq[i,j] <- t(table_Pc[,i ] - table_Pc[,j ]) %*%
+    D2_chisq[i,j] <- t(table_N[,i ] - table_N[,j ]) %*%
        diag(1 / rowSums(table_F)) %*% # Diagonal matrix from file margin
-      (table_Pc[, i] - table_Pc[, j])
+      (table_N[, i] - table_N[, j])
   }
 }
 # Names for distance matrix
@@ -405,6 +405,67 @@ caption = "Matriz de distancias de Canberra usando la primera definición.",
 ```
 
 No, evidentemente esta definición no nos llevará a la tabla 12.7 de Krebs. A simple vista ya vemos que si restamos las distancias a 1 (para hallar la similaridad) obtendremos valores negativos.
+
+
+### Segunda definición
+
+$$
+d_C(\mathbf{p,q}) = \frac{1}{k} \sum_{i=1}^k \frac{|p_i - q_i|}{|p_i| + |q_i|}
+$$
+
+```{r Canberra 2}
+ncols <- ncol(table_N)
+nrows <- nrow(table_N)
+# Initialize matrix to store results
+Can2 <- matrix(0, ncols, ncols)
+# Names for distance matrix
+rownames(Can2) <- colnames(Can2) <- colnames(table_N)
+# Calculate distances
+for (i in 1:(ncols)){
+  for (j in 1:ncols){
+    # Check denominators that equal zero
+    denominators <- abs(table_N[,i ]) + abs(table_N[,j ])
+    numerators <- abs(table_N[,i ] - table_N[,j ])
+    zero_d <- which(denominators == 0)
+    Can2[i, j] <- sum(numerators[-zero_d]/
+                        denominators[-zero_d])/nrows
+  }
+}
+
+
+# Print table
+kable(
+Can2,
+digits = 2,
+caption = "Matriz de distancias de Canberra usando la segunda definición.",
+  align = c(rep('c', 9)))
+```
+
+La tabla 12.7 en realidad es una tabla de similaridades, así que para transformar nuestra tabla de distancias en una de similaridas restaremos cada valor de la tabla a la unidad (1-C):
+
+```{r Canberra2 similaridades}
+kable(
+matrix(1, nrow = 9, ncol = 9) - # matrix of ones
+  Can2, # distance matrix to be converted into similarities
+digits = 2,
+caption = "Matriz de similaridades a partir de distancias de Canberra usando la segunda definición.",
+  align = c(rep('c', 9))
+)
+```
+
+Si la comparamos con la tabla 12.7 veremos que es casi igual. Hay pequeñas diferencias en los valores probablemente debidas a que para los cálculos de la tabla 12.7 los ceros de la matriz de frecuencias se han sustituido por el valor 0.1; mientras que en el algoritmo que hemos usado aquí hemos eliminado del sumatorio las divisiones con denominador igual a cero para evitar valores NaN.
+
+
+
+
+### Tercera definición
+
+
+
+
+
+
+
 
 
 # Apéndice A: Código
