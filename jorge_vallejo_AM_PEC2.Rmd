@@ -663,6 +663,12 @@ Intuitivamente, la división en 4 conglomerados parece tener más sentido que la
 
 ## (j) De los apartados anteriores se deduce que hay un número razonable de conglomerados, aunque no sea óptimo. Dibujar el dendograma del apartado (g) con esa partición.
 
+```{r dendrograma particiones, fig.cap= "Dendrograma de conglomerados a partir de la distancia de Canberra entre colonias de aves de la base de datos `seabird`, jerarquía estructurada según el método Ward.D2. Los rectángulos rojos señalan los conglomerados en los que decidimos dividir el conjunto según los resultados del ejercicios 1h y 1i."}
+# Plot the dendrogram
+plot(Ward_clust, main = "Dendrograma de conglomerados")
+rect.hclust(Ward_clust, k = 4)
+```
+
 
 # Apéndice A: Código
 
