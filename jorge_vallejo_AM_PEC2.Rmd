@@ -80,8 +80,9 @@ library(MASS) # plots with geometrically equal scales
 # library(scatterplot3d)
 # library(MVN)
 library(ca) # correspondence analysis
-library(vegan)
+library(vegan) # for function procrustes
 library(ade4) # for function is.euclid
+library(cluster) # for function silhouette
 ```
 
 # Ejercicio 1. Los pájaros de Hunt (_et al_.)
@@ -610,6 +611,22 @@ heatmap(as.matrix(CanR),
 
 El mapa de calor nos sirve para, de forma visual, hacernos una idea de los posibles conglomerados en la matriz de distancias a partir de los patrones de coloración (o intensidad). Por ejemplo, en la imagen está bastante claro que las colonias CH, PLI, y CI están cercanas entre ellas. La colonia SI es la más alejada de todas, pero más cercana a SPI y SGI que de cualquier otra. Las colonias CT, CL y NS también parecen formar otro grupo, por similaridad de tonos además cercano al primer grupo que habíamos localizado.
 
+
+## 1h. El siguiente paso es estudiar por algún criterio el número óptimo de conglomerados para el análisis jerárquico. Con la distancia de Canberra según R en particular, lo más sencillo es utilizar el criterio de las siluetas.
+
+```{r silueta conglomerados, fig.cap="El valor de silueta es una medida de cuán parecido es un objeto a su propio cúmulo en comparación con el resto de cúmulos. La figura representa el valor medio de silueta de todos los objetos dividiendo el grupo total en diferente número de conglomerados. El valor de silueta medio es el mayor cuando dividimos los datos en 6 conglomerados."}
+# Initialize vector for storing average silhouettes
+mean_sil <- c(rep(0, 7))
+# Compute silhouette averages
+for (i in 2:8){
+  sil <- silhouette(cutree(Ward_clust, k = i), dist = CanR)
+  mean_sil[i-1] <- mean(sil[, "sil_width"])
+}
+# Plot the averages
+plot(2:8,mean_sil,type="o",xlab="Número de conglomerados", ylab = "Valor medio de silueta")
+title(main="Valor medio de silueta por número de conglomerados")
+
+```
 
 
 
