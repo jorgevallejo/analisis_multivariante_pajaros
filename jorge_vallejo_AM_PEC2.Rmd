@@ -581,6 +581,38 @@ plot(proc)
 
 
 
+## 1g. Realizar un análisis de conglomerados jerárquico con el método de Ward 2 de la distancia de Canberra según R. Dibujar el dendograma resultante.
+
+Para el análisis de conglomerados jerárquico usaremos la matriz de distancias de Canberra calculada por la función `dist()`. Sobre ella usaremos la función `hclust()` configurada para usar el método `ward.D2`, que implementa el criterio de aglomeración de Ward.
+
+```{r Canberra dendrogram, fig.cap="Dendrograma de conglomerados de las colonias de aves de la base de datos `seabirds` calculado a partir de distancias de Canberra. Si lo comparamos con la gráfica de coordenadas principales del apartado 1f veremos que las colonias que en aquella gráfica aparecían más cercanas entre sí, en el dendrograma están agrupadas en las mismas ramas."}
+# Compute hierarchical clustering
+Ward_clust <- hclust(CanR, method = "ward.D2")
+
+# Plot the dendrogram
+plot(Ward_clust, main = "Dendrograma de conglomerados")
+```
+
+
+### Dibujar también un heatmap de este análisis con la función heatmap(). Para ello, hay que elegir bien los parámetros distfun= y hclustfun= y una escala de colores. ¿Para qué sirve el heatmap?
+
+```{r Canberra heatmap, fig.cap="Mapa de calor de la matriz de distancias de Canberra entre las colonias de aves. La distancia está codificada como una escala de grises desde el blanco (distancia 0) hasta el negro (distancia máxima)."}
+# Color scale
+greyscale <- colorRampPalette(c("white", "black"))(255)
+
+heatmap(as.matrix(CanR),
+        col = greyscale,
+        Rowv = NA,
+        Colv = "Rowv",
+        distfun = NA,
+        scale = "none")
+```
+
+El mapa de calor nos sirve para, de forma visual, hacernos una idea de los posibles conglomerados en la matriz de distancias a partir de los patrones de coloración (o intensidad). Por ejemplo, en la imagen está bastante claro que las colonias CH, PLI, y CI están cercanas entre ellas. La colonia SI es la más alejada de todas, pero más cercana a SPI y SGI que de cualquier otra. Las colonias CT, CL y NS también parecen formar otro grupo, por similaridad de tonos además cercano al primer grupo que habíamos localizado.
+
+
+
+
 # Apéndice A: Código
 
 El documento original en formato .Rmd, que incluye el código completo en lenguaje R usado para generar este informe, se puede consultar y descargar en el siguiente repositorio de Github:
