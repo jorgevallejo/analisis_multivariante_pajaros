@@ -112,16 +112,16 @@ La base de datos consta de 23 observaciones (files) y 10 variables (columnas). D
 
 [^1]: Alternativamente, podríamos reordenar la base de datos para tener sólo tres variables; especie, lugar geográfico y número de individuos. Sin embargo, para los análisis que realizaremos más adelante resulta más cómodo considerar cada lugar geogŕafico como una variable diferente.
 
-Specie: Nombre común de una especie de ave marina.
-CH: Número de individuos en la población de Cape Hay.
-PLI: Número de individuos en la población de Prince Leopold Island.
-CI: Individuos en Caburg Island.
-NS: Individuos en North Shields.
-CL: Individuos en Cape Lisburne.
-CT: Individuos en Cape Thompson.
-SI: Individuos en Skomer Island.
-SPI: Individuos en St. Paul Island.
-SGI: Individuos en George Island.
+**Specie**: Nombre común de una especie de ave marina.  
+**CH**: Número de individuos en la población de Cape Hay.  
+**PLI**: Número de individuos en la población de Prince Leopold Island.  
+**CI**: Individuos en Caburg Island.  
+**NS**: Individuos en North Shields.  
+**CL**: Individuos en Cape Lisburne.  
+**CT**: Individuos en Cape Thompson.  
+**SI**: Individuos en Skomer Island.  
+**SPI**: Individuos en St. Paul Island.  
+**SGI**: Individuos en George Island.  
 
 Finalmente, una forma rápida de buscar valores anómalos y valores ausentes es mediante el resumen numérico:
 ```{r}

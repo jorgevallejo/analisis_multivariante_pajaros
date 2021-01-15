@@ -355,7 +355,16 @@ kable(
 ##  $ SPI   : int  700 0 31000 2200 110000 39000 0 0 4400 1000 ...
 ##  $ SGI   : int  70000 0 72000 220000 1500000 190000 0 0 28000 6000 ...</code></pre>
 <p>La base de datos consta de 23 observaciones (files) y 10 variables (columnas). De las diez variables, una corresponde a la especie observada (codificada como cadena de caracteres) y las otras nueve son situaciones geográficas en las que se han obsevado colonias de dichas especies. Los valores que adoptan estas nueve variables son la cantidad de individuos de cada especie, y están codificadas como variables numéricas<a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a>:</p>
-<p>Specie: Nombre común de una especie de ave marina. CH: Número de individuos en la población de Cape Hay. PLI: Número de individuos en la población de Prince Leopold Island. CI: Individuos en Caburg Island. NS: Individuos en North Shields. CL: Individuos en Cape Lisburne. CT: Individuos en Cape Thompson. SI: Individuos en Skomer Island. SPI: Individuos en St. Paul Island. SGI: Individuos en George Island.</p>
+<p><strong>Specie</strong>: Nombre común de una especie de ave marina.<br />
+<strong>CH</strong>: Número de individuos en la población de Cape Hay.<br />
+<strong>PLI</strong>: Número de individuos en la población de Prince Leopold Island.<br />
+<strong>CI</strong>: Individuos en Caburg Island.<br />
+<strong>NS</strong>: Individuos en North Shields.<br />
+<strong>CL</strong>: Individuos en Cape Lisburne.<br />
+<strong>CT</strong>: Individuos en Cape Thompson.<br />
+<strong>SI</strong>: Individuos en Skomer Island.<br />
+<strong>SPI</strong>: Individuos en St. Paul Island.<br />
+<strong>SGI</strong>: Individuos en George Island.</p>
 <p>Finalmente, una forma rápida de buscar valores anómalos y valores ausentes es mediante el resumen numérico:</p>
 <pre class="r"><code>summary(seabirds)</code></pre>
 <pre><code>##     Specie                CH              PLI               CI        
