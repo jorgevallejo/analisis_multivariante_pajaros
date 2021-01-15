@@ -628,6 +628,26 @@ title(main="Valor medio de silueta por número de conglomerados")
 
 ```
 
+Parece un poco exagerado dividir en 6 grupos un total de 9 objetos. Quizá una división en 4 o 5 conglomerados sería más adecuada.
+
+
+
+## 1i. Estudiar con la misma distancia el número óptimo de conglomerados con el método PAM.
+
+```{r pam conglomerados, fig.cap="Valor medio de silueta para diferente número de conglomerados. En esta ocasión el reparto de objetos entre conglomerados se ha hecho según un algoritmo de reparto alrededor de medoides (PAM). El valor de silueta medio es el mayor cuando dividimos los datos en 7 conglomerados."}
+# Initialize vector for storing average silhouettes
+mean_sil <- c(rep(0, 7))
+# Compute silhouette averages
+for (i in 2:8){
+  sil <- silhouette(pam(CanR, k=i))
+  mean_sil[i-1] <- mean(sil[, "sil_width"])
+}
+# Plot the averages
+plot(2:8,mean_sil,type="o",xlab="Número de conglomerados", ylab = "Valor medio de silueta")
+title(main="Valor medio de silueta por número de conglomerados")
+```
+
+Definiendo los conglomerados según el método PAM obtenemos un valor medio de silueta óptimo para 7 conglomerados en lugar de los 6 del ejercicio anterior. Intuitivamente nos parece un número demasiado alto de conglomerados entre los que repartir 9 objetos. Los siguientes mejores valores se obtienen con 4 y 5 conglomerados, que parecen cifras más adecuada.
 
 
 # Apéndice A: Código
