@@ -653,17 +653,12 @@ Si representamos los conglomerados gráficamente (sobre un plano formado por las
 ```{r}
 par(mfrow = c(1,2))
 # Four clusters
-clusplot(pam(CanR, 4, diss = TRUE), color = TRUE, shade = TRUE, labels=4, lines=0, main = "Cuatro conglomerados")
+clusplot(pam(CanR, 4, diss = TRUE), color = TRUE, shade = TRUE, labels=2, lines=0, main = "Cuatro conglomerados", col.txt = "black")
 # Five clusters
-clusplot(pam(CanR, 5, diss = TRUE), color = TRUE, shade = TRUE, labels=5, lines=0, main = "Cinco conglomerados")
+clusplot(pam(CanR, 5, diss = TRUE), color = TRUE, shade = TRUE, labels=2, lines=0, main = "Cinco conglomerados", col.txt = "black")
 ```
 
 Intuitivamente, la división en 4 conglomerados parece tener más sentido que la división en 5.
-
-
-
-
-
 
 
 ## (j) De los apartados anteriores se deduce que hay un número razonable de conglomerados, aunque no sea óptimo. Dibujar el dendograma del apartado (g) con esa partición.
