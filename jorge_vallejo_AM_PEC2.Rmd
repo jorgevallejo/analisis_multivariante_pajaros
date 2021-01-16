@@ -201,10 +201,10 @@ kable(
 ### Matrices de perfiles
 ```{r file profiles table}
 # Frecuencias relativas condicionadas por filas
-table_P <- sweep(table_F, 1, table_M$Suma, "/") 
+table_Pf <- sweep(table_F, 1, table_M$Suma, "/") 
 
 kable(
-  drop.leading.0(table_P),
+  drop.leading.0(table_Pf),
   caption = "Matriz de perfiles de fila",
   align = c(rep('c', 9)) # To center the zeroes (prettier table)
 )
@@ -214,10 +214,10 @@ kable(
 
 ```{r column profiles table}
 # Frecuencias relativas condicionadas por columnas
-table_N <- sweep(table_F, 2, colSums(table_F), "/") 
+table_Pc <- sweep(table_F, 2, colSums(table_F), "/") 
 
 kable(
-  drop.leading.0(table_N),
+  drop.leading.0(table_Pc),
   caption = "Matriz de perfiles de columna",
   align = c(rep('c', 9)) # To center the zeroes (prettier table)
 )
@@ -230,19 +230,19 @@ kable(
 ### Matriz de distancias ji-cuadrado entre columnas
 
 ```{r ji-sq distances matrix}
-ncols <- ncol(table_N)
+ncols <- ncol(table_Pc)
 # Initialize matrix to store results
 D2_chisq <- matrix(0, ncols, ncols)
 # Calculate distances
 for (i in 1:(ncols)){
   for (j in 1:ncols){
-    D2_chisq[i,j] <- t(table_N[,i ] - table_N[,j ]) %*%
+    D2_chisq[i,j] <- t(table_Pc[,i ] - table_Pc[,j ]) %*%
        diag(1 / rowSums(table_F)) %*% # Diagonal matrix from file margin
-      (table_N[, i] - table_N[, j])
+      (table_Pc[, i] - table_Pc[, j])
   }
 }
 # Names for distance matrix
-rownames(D2_chisq) <- colnames(D2_chisq) <- colnames(table_N)
+rownames(D2_chisq) <- colnames(D2_chisq) <- colnames(table_Pc)
 
 # Print table
 kable(
