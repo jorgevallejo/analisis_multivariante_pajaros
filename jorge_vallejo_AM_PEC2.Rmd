@@ -1,11 +1,12 @@
 ---
-title: "Los pájaros de Hunt _(et al.)_"
+title: "Pájaros y salmones"
 subtitle: "Análisis Multivariante - PEC 2"
 author: "Jorge Vallejo Ortega"
 date: '`r format(Sys.Date(),"%e de %B, %Y")`'
 output:
   html_document:
      toc: true
+     toc_float: TRUE
 # pdf_document:
 #   number_sections: true
 # toc: true
@@ -85,7 +86,7 @@ library(ade4) # for function is.euclid
 library(cluster) # for function silhouette
 ```
 
-# Ejercicio 1. Los pájaros de Hunt (_et al_.)
+# Ejercicio 1. Los pájaros de Hunt
 
 **En el trabajo de Hunt et al.[-@hunt1986reproductive] se estudió la capacidad reproductiva de cinco especies de aves marinas en dos colonias en el sureste del mar de Bering. Además, el apéndice de este estudio resume las colonias y los tamaños de las poblaciones de otros trabajos. El archivo `seabirds.csv` recoge los datos (número de pájaros) de 23 especies en 9 colonias en el área del norte polar y subpolar. **
 
@@ -661,7 +662,7 @@ clusplot(pam(CanR, 5, diss = TRUE), color = TRUE, shade = TRUE, labels=2, lines=
 Intuitivamente, la división en 4 conglomerados parece tener más sentido que la división en 5.
 
 
-## (j) De los apartados anteriores se deduce que hay un número razonable de conglomerados, aunque no sea óptimo. Dibujar el dendograma del apartado (g) con esa partición.
+## 1j. De los apartados anteriores se deduce que hay un número razonable de conglomerados, aunque no sea óptimo. Dibujar el dendograma del apartado (g) con esa partición.
 
 ```{r dendrograma particiones, fig.cap= "Dendrograma de conglomerados a partir de la distancia de Canberra entre colonias de aves de la base de datos `seabird`, jerarquía estructurada según el método Ward.D2. Los rectángulos rojos señalan los conglomerados en los que decidimos dividir el conjunto según los resultados del ejercicios 1h y 1i."}
 # Plot the dendrogram
@@ -669,6 +670,47 @@ plot(Ward_clust, main = "Dendrograma de conglomerados")
 rect.hclust(Ward_clust, k = 4)
 ```
 
+
+# Ejercicio 2. Los salmones de Johnson
+
+**Un estudio contiene dos medidas de los anillos de crecimiento en la escala del salmón de Alaska y de Canadá. Los datos se pueden obtener 3 en el libro de Johnson et al. [-@johnson] y se adjuntan en el archivo `salmon.txt`.**
+
+En primer lugar, como preparación al ejercicio cargaremos los datos a memoria y examinaremos las características y estructura de los mismos.
+
+```{r}
+salmon <- read.table("./data/salmon.txt",
+                     header = TRUE)
+
+kable(
+  head(salmon),
+  caption = "Ejemplo de las primeras seis observaciones en la base de datos `salmon.txt`."
+)
+```
+
+Si examinamos la estructura de la base de datos:
+
+```{r}
+str(salmon)
+```
+
+La variable `Gender` la codificaremos como factor, no como numérica:
+```{r}
+salmon$Gender <- factor(salmon$Gender, labels = c("female", "male"))
+```
+
+La base de datos consta de 100 observaciones (filas) y 4 variables (columnas). De las cuatro variables, dos son categóricas ( _Gender_ y _Origin_) y dos son contínuas ( _Freshwater_ y _Origin_ ).
+
+**Gender:** hembra = 1 y macho = 2.  
+**Freshwater**: Diámetro de los anillos del primer año de crecimiento en agua dulce (centésimas de pulgada).  
+**Marine:** Diámetro de los anillos del primer año de crecimiento en ambiente marino (centésimas de pulgada).  
+**Origin:** Origen del pez. 1 = Alaskan, 2 = Canadian.  
+
+Finalmente, una forma rápida de buscar valores anómalos y valores ausentes es mediante el resumen numérico:
+```{r}
+summary(salmon)
+```
+
+No parece haber valores anómalos (entendidos como imposiblemente elevados, negativos, o faltantes) en ninguna de las variables. Las variables categóricas están ambas equilibradas, especialmente _Origin_.
 
 # Apéndice A: Código
 
